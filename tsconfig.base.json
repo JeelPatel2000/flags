@@ -9,14 +9,14 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "es2015",
-    "module": "esnext",
+    "module": "commonjs",
     "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
       "@flags/api-interfaces": ["libs/api-interfaces/src/index.ts"]
-    }
+    },
   },
   "exclude": ["node_modules", "tmp"]
 }
