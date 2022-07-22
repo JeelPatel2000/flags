@@ -1,13 +1,24 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import styles from './app.module.css';
-import NxWelcome from './nx-welcome';
+import { MantineProvider, useMantineTheme } from '@mantine/core';
+
+import Router from './Router';
 
 export function App() {
+  const theme = useMantineTheme();
+
   return (
-    <>
-      <NxWelcome title="frontend" />
-      <div />
-    </>
+    <MantineProvider
+      theme={{
+        fontFamily: 'Inter',
+        colors: {
+          primaryColor: [...theme.colors.indigo],
+        },
+        headings: {
+          fontFamily: 'Inter',
+        },
+      }}
+    >
+      <Router />
+    </MantineProvider>
   );
 }
 
