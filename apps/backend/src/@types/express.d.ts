@@ -1,3 +1,4 @@
+import { JwtPayload } from "jsonwebtoken";
 import { Knex } from "knex";
 
 export declare type withAuthFunctions = {
@@ -5,7 +6,7 @@ export declare type withAuthFunctions = {
 };
 
 export declare type withAuthenticatedUser = {
-    user?: Record<string, any>;
+    user?: string | JwtPayload;
 };
 
 declare global {
