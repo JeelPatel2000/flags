@@ -5,6 +5,7 @@ import { knex } from "knex";
 import { getConfig } from "./config";
 import { IUserRepository } from "./repository/interfaces/IUserRepository";
 import { UserRepository } from "./repository/UserRepository";
+import * as cors from "cors";
 
 config();
 
@@ -18,6 +19,9 @@ const knexdb = knex({
         user: appConfig.username,
         password: appConfig.password,
         database: appConfig.database,
+        ssl: {
+            rejectUnauthorized: false,
+        },
     },
     migrations: {
         tableName: "migrations",
@@ -31,6 +35,12 @@ console.log(testConnection);
 const userRepository: IUserRepository = new UserRepository(knexdb, "users");
 
 const app = express();
+
+app.use(
+    cors({
+        origin: "*",
+    })
+);
 
 app.use(express.json());
 
