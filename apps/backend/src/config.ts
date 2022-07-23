@@ -1,4 +1,4 @@
-export type GlobalConfig = DbConfig;
+export type GlobalConfig = DbConfig & AuthConfig;
 
 export type DbConfig = {
     host: string;
@@ -7,10 +7,15 @@ export type DbConfig = {
     database: string;
 };
 
+export type AuthConfig = {
+    jwtPrivateKey: string;
+};
+
 export type Environment = "prod" | "dev";
 
 export const getConfig = (environment: Environment): GlobalConfig => {
     let dbConfig: DbConfig;
+    let authConfig: AuthConfig;
 
     if (environment === "prod") {
         dbConfig = {
@@ -19,14 +24,20 @@ export const getConfig = (environment: Environment): GlobalConfig => {
             password: process.env.PASSWORD || "",
             username: process.env.USERNAME || "",
         };
+        authConfig = {
+            jwtPrivateKey: "yrbfsdafgreyrwereyryhiuschvshk",
+        };
     } else {
         dbConfig = {
             database: "flags",
             host: "localhost",
-            password: "",
+            password: "Test123#",
             username: "root",
+        };
+        authConfig = {
+            jwtPrivateKey: "yrbfsdafgreyrwereyryhiuschvshk",
         };
     }
 
-    return dbConfig;
+    return { ...dbConfig, ...authConfig };
 };
