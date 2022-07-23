@@ -1,8 +1,15 @@
 import { Router, Response } from "express";
 import { createValidator, ValidatedRequest } from "express-joi-validation";
 import { IUserRepository } from "../../repository/interfaces/IUserRepository";
-import { logout, register } from "./auth-handlers";
-import { loginPostSchema, LoginRequestSchema } from "./validator";
+import { logout } from "./auth-handlers";
+import {
+    loginPostSchema,
+    RequestSchema,
+    RegisterPostSchema,
+    registerPostSchema,
+} from "./validator";
+import * as jwt from "jsonwebtoken";
+import { AuthConfig } from "../../config";
 
 export function authRouter(userRepository: IUserRepository) {
     const router: Router = Router();
@@ -11,9 +18,13 @@ export function authRouter(userRepository: IUserRepository) {
     router.post(
         "/login",
         validator.body(loginPostSchema),
-        async (req: ValidatedRequest<LoginRequestSchema>, res: Response) => {
+        async (
+            req: ValidatedRequest<RequestSchema<RegisterPostSchema>>,
+            res: Response
+        ) => {
             try {
                 const { email, password } = req.body;
+                const config = req.config as AuthConfig;
 
                 const user = await userRepository.findOneByEmail(email);
 
@@ -28,7 +39,10 @@ export function authRouter(userRepository: IUserRepository) {
                 if (!validPassword)
                     return res.status(400).send("Invalid email or password.");
 
-                const token = "343893889090";
+                const token = jwt.sign(
+                    { userId: user.id, email: user.email },
+                    config.jwtPrivateKey
+                );
 
                 res.send(token);
             } catch (error) {
@@ -38,7 +52,34 @@ export function authRouter(userRepository: IUserRepository) {
         }
     );
 
-    router.post("/register", register);
+    router.post(
+        "/register",
+        validator.body(registerPostSchema),
+        async (
+            req: ValidatedRequest<RequestSchema<RegisterPostSchema>>,
+            res: Response
+        ) => {
+            try {
+                const { email, password, name } = req.body;
+
+                const existingUser = await userRepository.findOneByEmail(email);
+
+                if (existingUser !== undefined) {
+                    res.status(400).send({ error: "Users already exist" });
+                }
+
+                const userId = await userRepository.create({
+                    email: email,
+                    password: password,
+                    name: name,
+                });
+
+                res.send({ userId });
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    );
 
     router.post("/logout", logout);
 

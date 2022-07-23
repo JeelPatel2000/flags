@@ -13,7 +13,6 @@ export class BaseRepository<T> implements IBaseRepository<T> {
 
     async create(item: Omit<T, "id">): Promise<T> {
         const [output] = await this.queryBuilder.insert<T>(item).returning("*");
-
         return output as Promise<T>;
     }
     createMany(items: T[]): Promise<T[]> {

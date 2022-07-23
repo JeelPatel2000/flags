@@ -1,5 +1,4 @@
 import type { Knex } from "knex";
-import * as fs from "fs";
 
 // Update with your config settings.
 const HOST = "tg0rp2bwcatb.aws-ap-southeast-2-1.psdb.cloud";
