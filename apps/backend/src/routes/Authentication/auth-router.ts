@@ -38,7 +38,6 @@ export function authRouter(userRepository: IUserRepository) {
                     password,
                     user.password
                 );
-                // const validPassword = password == user.password;
 
                 if (!validPassword)
                     return res.status(400).send("Invalid email or password.");
@@ -76,8 +75,6 @@ export function authRouter(userRepository: IUserRepository) {
 
                 const salt = await bcrypt.genSalt(10);
                 const hashedPassword = await bcrypt.hash(password, salt);
-
-                console.log(`Hashed password : ${hashedPassword}`);
 
                 const userId = await userRepository.create({
                     email: email,
