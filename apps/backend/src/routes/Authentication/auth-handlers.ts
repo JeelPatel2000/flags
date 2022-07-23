@@ -1,9 +1,4 @@
 import { Request, Response } from "express";
-import * as bcrypt from "bcrypt";
-import { ValidatedRequest } from "express-joi-validation";
-import { LoginRequestSchema } from "./validator";
-import { IUserRepository } from "../../repository/interfaces/IUserRepository";
-
 // export const login = async (
 //     req: ValidatedRequest<LoginRequestSchema>,
 //     res: Response,
