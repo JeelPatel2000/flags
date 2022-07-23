@@ -43,7 +43,7 @@ export function authRouter(userRepository: IUserRepository) {
                     return res.status(400).send("Invalid email or password.");
 
                 const token = jwt.sign(
-                    { userId: user.id, email: user.email },
+                    { userId: user.id, email: user.email, name: user.name },
                     config.jwtPrivateKey
                 );
 
@@ -64,6 +64,7 @@ export function authRouter(userRepository: IUserRepository) {
         ) => {
             try {
                 const { email, password, name } = req.body;
+                const config = req.config as AuthConfig;
 
                 const existingUser = await userRepository.findOneByEmail(email);
 
@@ -82,7 +83,11 @@ export function authRouter(userRepository: IUserRepository) {
                     name: name,
                 });
 
-                res.send({ userId });
+                const token = jwt.sign(
+                    { userId: userId, email: email, name: name },
+                    config.jwtPrivateKey
+                );
+                res.send({ token });
             } catch (error) {
                 console.log(error);
             }
