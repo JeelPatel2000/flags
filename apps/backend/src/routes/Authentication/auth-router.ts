@@ -10,6 +10,7 @@ import {
 } from "./validator";
 import * as jwt from "jsonwebtoken";
 import { AuthConfig } from "../../config";
+import * as bcrypt from "bcrypt";
 
 export function authRouter(userRepository: IUserRepository) {
     const router: Router = Router();
@@ -33,8 +34,10 @@ export function authRouter(userRepository: IUserRepository) {
                         .status(404)
                         .send("User not found. Invalid email or password.");
 
-                // const validPassword = await bcrypt.compare(password, user.password);
-                const validPassword = password == user.password;
+                const validPassword = await bcrypt.compare(
+                    password,
+                    user.password
+                );
 
                 if (!validPassword)
                     return res.status(400).send("Invalid email or password.");
@@ -65,12 +68,17 @@ export function authRouter(userRepository: IUserRepository) {
                 const existingUser = await userRepository.findOneByEmail(email);
 
                 if (existingUser !== undefined) {
-                    res.status(400).send({ error: "Users already exist" });
+                    return res
+                        .status(400)
+                        .send({ error: "Users already exist" });
                 }
+
+                const salt = await bcrypt.genSalt(10);
+                const hashedPassword = await bcrypt.hash(password, salt);
 
                 const userId = await userRepository.create({
                     email: email,
-                    password: password,
+                    password: hashedPassword,
                     name: name,
                 });
 
