@@ -8,7 +8,7 @@ import {
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../components/Button";
-import Carousel from "../components/Carousel";
+import Logo from "../components/Logo";
 
 const footerNavigation = {
     social: [
@@ -87,13 +87,9 @@ export default function LandingPage() {
                     <div className="mx-auto max-w-md px-4 sm:max-w-3xl sm:px-6 lg:px-8 lg:max-w-7xl lg:grid lg:grid-cols-2 lg:gap-24">
                         <div>
                             <div>
-                                <img
-                                    className="h-11 w-auto"
-                                    src="https://tailwindui.com/img/logos/workflow-mark.svg?color=rose&shade=500"
-                                    alt="Workflow"
-                                />
+                                <Logo />
                             </div>
-                            <div className="mt-20">
+                            <div className="mt-10">
                                 <div>
                                     <span className="rounded bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-600 tracking-wide uppercase">
                                         NEW
@@ -233,6 +229,13 @@ export default function LandingPage() {
                             />
                         )}
                     </div>
+                </div>
+
+                <div className="mt-20">
+                        <p>Read the docs.</p>
+                    <h1>
+                        Access docs. <Link to="/docs">Docs</Link>
+                    </h1>
                 </div>
             </main>
 

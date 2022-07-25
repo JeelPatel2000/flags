@@ -9,7 +9,7 @@ import * as cors from "cors";
 
 config();
 
-const appConfig = getConfig("dev");
+const appConfig = getConfig("prod");
 
 const knexdb = knex({
     client: "mysql2",
