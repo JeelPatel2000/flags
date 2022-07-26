@@ -1,19 +1,45 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
-import {
-    HomeIcon,
-    ViewListIcon,
-    XIcon,
-} from "@heroicons/react/outline";
+import { Fragment, useEffect, useState } from "react";
+import { HomeIcon, ViewListIcon, XIcon } from "@heroicons/react/outline";
 import { classNames } from "../../services/utilService";
 import Logo from "../Logo";
 import Profile from "../Profile";
+import { Link, useLocation } from "react-router-dom";
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: any) => {
     const [navigation, setNavigation] = useState([
         { name: "Home", href: "/", icon: HomeIcon, current: true },
-        { name: "Projects", href: "#", icon: ViewListIcon, current: false },
+        {
+            name: "Projects",
+            href: "/projects",
+            icon: ViewListIcon,
+            current: false,
+        },
     ]);
+
+    const { pathname } = useLocation();
+    useEffect(() => {
+        const updatePathName = pathname.split("/")[1].toLowerCase();
+
+        setNavigation(
+            navigation.map((item) => {
+                if (
+                    item.name.toLowerCase() === updatePathName ||
+                    (pathname === "/" && item.name.toLowerCase() === "home") ||
+                    ((updatePathName === "projects" ||
+                        updatePathName === "add_project") &&
+                        item.name.toLowerCase() === "project_details")
+                ) {
+                    item.current = true;
+                } else {
+                    item.current = false;
+                }
+
+                return item;
+            })
+        );
+    }, [pathname]);
+
     return (
         <>
             <Transition.Root show={sidebarOpen} as={Fragment}>
@@ -135,9 +161,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: any) => {
                     <nav className="px-3 mt-6">
                         <div className="space-y-1">
                             {navigation.map((item) => (
-                                <a
+                                <Link
                                     key={item.name}
-                                    href={item.href}
+                                    to={item.href}
                                     className={classNames(
                                         item.current
                                             ? "bg-gray-200 text-gray-900"
@@ -158,7 +184,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: any) => {
                                         aria-hidden="true"
                                     />
                                     {item.name}
-                                </a>
+                                </Link>
                             ))}
                         </div>
                     </nav>
