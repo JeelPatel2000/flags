@@ -6,6 +6,9 @@ import { getConfig } from "./config";
 import { IUserRepository } from "./repository/interfaces/IUserRepository";
 import { UserRepository } from "./repository/UserRepository";
 import * as cors from "cors";
+import { ProjectRouter } from "./routes/Project/project-router";
+import { IProjectRepository } from "./repository/interfaces/IProjectRepository";
+import { ProjectRepository } from "./repository/ProjectRepository";
 
 config();
 
@@ -33,6 +36,10 @@ const testConnection = knexdb.raw("SELECT 1+1");
 console.log(testConnection);
 
 const userRepository: IUserRepository = new UserRepository(knexdb, "users");
+const projectRepository: IProjectRepository = new ProjectRepository(
+    knexdb,
+    "projects"
+);
 
 const app = express();
 
@@ -50,6 +57,7 @@ app.use(express.json());
 
 // Routes
 app.use("/auth", authRouter(userRepository));
+app.use("/projects", ProjectRouter(projectRepository));
 
 const PORT = process.env.PORT || 4300;
 app.listen(PORT, () => console.log(`Server stared on port ${PORT}`));
