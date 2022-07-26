@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Button from "../Button";
 
 const Header = ({ pageTitle }: { pageTitle: string }) => {
@@ -8,9 +9,13 @@ const Header = ({ pageTitle }: { pageTitle: string }) => {
                     {pageTitle}
                 </h1>
             </div>
-            <div className="mt-4 flex sm:mt-0 sm:ml-4">
-                <Button>Create Project</Button>
-            </div>
+            {(pageTitle === "Home" || pageTitle === "Projects") && (
+                <div className="mt-4 flex sm:mt-0 sm:ml-4">
+                    <Link to="add_project">
+                        <Button>Create Project</Button>
+                    </Link>
+                </div>
+            )}
         </div>
     );
 };
