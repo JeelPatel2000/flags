@@ -1,5 +1,8 @@
 import {
+    Alert,
+    AlertIcon,
     FormControl,
+    FormErrorMessage,
     FormLabel,
     Image,
     Input,
@@ -10,14 +13,97 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useState } from "react";
 import Button from "../components/Button";
 import { Link } from "react-router-dom";
+import Logo from "../components/Logo";
+import Joi from "joi";
+import { authService } from "../services";
+
+type SignUpDataType = {
+    name: string;
+    email: string;
+    password: string;
+};
 
 export default function Register() {
-    const [input, setInput] = useState("");
+    const [apiError, setApiError] = useState<string | null>(null);
+    const [data, setData] = useState<SignUpDataType>({
+        name: "",
+        email: "",
+        password: "",
+    });
 
-    const handleInputChange = (e: any) => setInput(e.target.value);
+    const [errors, setErrors] = useState<SignUpDataType>({
+        name: "",
+        email: "",
+        password: "",
+    });
 
-    const isError = false;
+    const schema: any = {
+        name: Joi.string().required().label("Name"),
+        email: Joi.string()
+            .required()
+            .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
+            .label("Email"),
+        password: Joi.string().required().min(5).label("Password"),
+    };
 
+    const doSubmit = async () => {
+        try {
+            const response = await authService.register(data);
+            console.log(response);
+            authService.loginWithJwt(response.headers["authorization"]);
+            window.location.href = "/";
+        } catch (error: any) {
+            if (error.response && error.response.status === 400) {
+                setErrors({ ...errors, email: error.response.data });
+            } else {
+                setApiError(error.response.data);
+            }
+        }
+    };
+
+    const validate = () => {
+        const options = { abortEarly: false };
+        const { error } = Joi.object(schema).validate(data, options);
+        if (!error) return null;
+        const errors: any = {};
+        for (const item of error.details) errors[item.path[0]] = item.message;
+        return errors;
+    };
+
+    const validateProperty = ({ name, value }: any) => {
+        const obj = { [name]: value };
+        const Joischema = { [name]: schema[name] };
+        const { error } = Joi.object(Joischema).validate(obj);
+        return error ? error.details[0].message : null;
+    };
+
+    const handleSubmit = (e: any) => {
+        e.preventDefault();
+        const errors = validate();
+        setErrors(errors);
+        if (errors) return;
+        doSubmit();
+    };
+
+    const handleChange = ({ currentTarget: input }: any) => {
+        setApiError(null);
+        setErrors({
+            name: "",
+            email: "",
+            password: "",
+        });
+
+        const errorMessage = validateProperty(input);
+        if (errors) {
+            // @ts-ignore
+            if (errorMessage) errors[input.name] = errorMessage;
+            // @ts-ignore
+            else delete errors[input.name];
+        }
+
+        setData({ ...data, [input.name]: input.value });
+        setErrors(errors);
+    };
     const [show, setShow] = useState(false);
     const handleClick = () => setShow(!show);
 
@@ -27,11 +113,7 @@ export default function Register() {
                 <div className="mx-auto w-full max-w-sm lg:w-96">
                     <div>
                         <Link to="/">
-                            <Image
-                                className="h-12 w-auto"
-                                src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
-                                alt="Workflow"
-                            />
+                            <Logo />
                         </Link>
                         <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
                             Create your account
@@ -39,57 +121,61 @@ export default function Register() {
                     </div>
 
                     <div className="mt-8">
+                        {apiError && (
+                            <Alert status="error">
+                                <AlertIcon />
+                                {apiError}
+                            </Alert>
+                        )}
                         <div className="mt-6">
                             <div className="space-y-6">
-                                <FormControl isInvalid={isError}>
+                                <FormControl
+                                    isInvalid={errors && !!errors.name}
+                                >
                                     <FormLabel>Name</FormLabel>
                                     <Input
+                                        name="name"
                                         rounded="sm"
                                         type="text"
-                                        value={input}
-                                        onChange={handleInputChange}
+                                        onChange={handleChange}
                                         placeholder="Enter your name"
                                     />
-                                    {/* {!isError ? (
-                                        <FormHelperText>
-                                            Enter the email you'd like to
-                                            receive the newsletter on.
-                                        </FormHelperText>
-                                    ) : (
+                                    {errors && errors.name && (
                                         <FormErrorMessage>
-                                            Email is required.
+                                            {errors.name}
                                         </FormErrorMessage>
-                                    )} */}
+                                    )}
                                 </FormControl>
-                                <FormControl isInvalid={isError}>
+                                <FormControl
+                                    isInvalid={errors && !!errors.email}
+                                >
                                     <FormLabel>Email</FormLabel>
                                     <Input
+                                        name="email"
                                         rounded="sm"
                                         type="email"
-                                        value={input}
-                                        onChange={handleInputChange}
+                                        onChange={handleChange}
                                         placeholder="Enter email"
                                     />
-                                    {/* {!isError ? (
-                                        <FormHelperText>
-                                            Enter the email you'd like to
-                                            receive the newsletter on.
-                                        </FormHelperText>
-                                    ) : (
+                                    {errors && errors.email && (
                                         <FormErrorMessage>
-                                            Email is required.
+                                            {errors.email}
                                         </FormErrorMessage>
-                                    )} */}
+                                    )}
                                 </FormControl>
-                                <FormControl isInvalid={isError}>
+                                <FormControl
+                                    isInvalid={errors && !!errors.password}
+                                >
                                     <FormLabel>Password</FormLabel>
                                     <InputGroup size="md">
                                         <Input
+                                            name="password"
                                             rounded="sm"
                                             colorScheme="facebook"
                                             pr="4.5rem"
                                             type={show ? "text" : "password"}
                                             placeholder="Enter password"
+                                            onChange={handleChange}
                                         />
                                         <InputRightElement width="4.5rem">
                                             <Button
@@ -104,20 +190,21 @@ export default function Register() {
                                             </Button>
                                         </InputRightElement>
                                     </InputGroup>
-                                    {/* {!isError ? (
-                                        <FormHelperText>
-                                            Enter the email you'd like to
-                                            receive the newsletter on.
-                                        </FormHelperText>
-                                    ) : (
+                                    {errors && errors.password && (
                                         <FormErrorMessage>
-                                            Email is required.
+                                            {errors.password}
                                         </FormErrorMessage>
-                                    )} */}
+                                    )}
                                 </FormControl>
 
                                 <div>
-                                    <Button width="w-full">Sign in</Button>
+                                    <Button
+                                        width="w-full"
+                                        onClick={handleSubmit}
+                                        disabled={validate() || apiError}
+                                    >
+                                        Register
+                                    </Button>
                                 </div>
                                 <div>
                                     <p className="flex">
