@@ -35,7 +35,7 @@ const AUTH_ROUTES = [
             { path: "/", component: () => <Home /> },
             { path: "/add_project", component: () => <AddProject /> },
             { path: "/projects", component: () => <Projects /> },
-            { path: "/project_details", component: () => <ProjectDetails /> },
+            { path: "/project_details/:projectId", component: () => <ProjectDetails /> },
         ],
     },
     {
@@ -45,10 +45,6 @@ const AUTH_ROUTES = [
 ];
 
 function Router() {
-    const user = getCurrentUser();
-
-    console.log(user);
-
     return (
         <Routes>
             {getCurrentUser()

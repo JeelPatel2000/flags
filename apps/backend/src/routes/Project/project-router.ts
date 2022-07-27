@@ -38,6 +38,17 @@ export function ProjectRouter(projectRepository: IProjectRepository) {
         }
     );
 
+    router.get(
+        "/project/:projectId",
+        async (req: Request<{ projectId: string }>, res: Response) => {
+            const projectId = req.params.projectId;
+            console.log("Called");
+            const project = await projectRepository.getProjectById(projectId);
+
+            res.send(`${JSON.stringify(project)}`);
+        }
+    );
+
     router.delete(
         "/:projectId",
         async (req: Request<{ projectId: string }>, res: Response) => {

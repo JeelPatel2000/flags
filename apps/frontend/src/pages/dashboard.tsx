@@ -17,13 +17,13 @@ export default function Dashboard() {
     const page: string = useLocation().pathname.split("/")[1];
 
     return (
-        <div className="min-h-full">
+        <div className="min-h-full h-full">
             <Sidebar
                 sidebarOpen={sidebarOpen}
                 setSidebarOpen={setSidebarOpen}
             />
             {/* Main column */}
-            <div className="lg:pl-64 flex flex-col">
+            <div className="lg:pl-64 flex flex-col h-full">
                 {/* Search header */}
                 <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:hidden">
                     <button
@@ -40,7 +40,7 @@ export default function Dashboard() {
                         </div>
                     </div>
                 </div>
-                <main className="flex-1">
+                <main className="flex-1 ">
                     {/* Page title & actions */}
                     <Header pageTitle={pageMap[page]} />
 

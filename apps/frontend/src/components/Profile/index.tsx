@@ -94,7 +94,7 @@ const Profile = ({ isTruncated }: { isTruncated: boolean }) => {
                         <Menu.Item>
                             {({ active }) => (
                                 <a
-                                    href="#"
+                                    href="/logout"
                                     className={classNames(
                                         active
                                             ? "bg-gray-100 text-gray-900"
