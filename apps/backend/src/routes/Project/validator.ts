@@ -1,4 +1,3 @@
-import { ValidatedRequestSchema, ContainerTypes } from "express-joi-validation";
 import Joi = require("joi");
 
 export const projectPostSchema = Joi.object({
