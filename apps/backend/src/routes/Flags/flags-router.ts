@@ -1,14 +1,15 @@
+import { randomUUID } from "crypto";
 import { Request, Response, Router } from "express";
 import { ValidatedRequest } from "express-joi-validation";
 import { IFlagsRepository } from "../../repository/interfaces/IFlagsRepository";
 import { RequestSchema } from "../Authentication/validator";
 import { FlagsPostSchema } from "./validator";
 
-export function ProjectRouter(flagsRepository: IFlagsRepository) {
+export function flagsRouter(flagsRepository: IFlagsRepository) {
     const router = Router();
 
     router.get(
-        "/:projectId",
+        "/project/:projectId",
         async (req: Request<{ projectId: string }>, res: Response) => {
             const projectId = req.params.projectId;
 
@@ -16,7 +17,7 @@ export function ProjectRouter(flagsRepository: IFlagsRepository) {
                 projectId
             );
 
-            res.send(`${JSON.stringify(projectFlags)}`);
+            res.type("json").send(`${JSON.stringify(projectFlags)}`);
         }
     );
 
@@ -28,38 +29,34 @@ export function ProjectRouter(flagsRepository: IFlagsRepository) {
         ) => {
             const { name, description, projectId, state } = req.body;
 
-            const flagId = await flagsRepository.create({
+            const uuid = randomUUID();
+            const flagId = await flagsRepository.createWithUUID({
+                id: uuid,
                 description: description,
                 name: name,
                 projectId: projectId,
                 state: state,
             });
 
-            res.send(`Flag Id: ${flagId}`);
+            res.send(`Flag Id: ${uuid}`);
         }
     );
 
     router.delete(
-        "/:projectId/:flagId",
-        async (
-            req: Request<{ projectId: string; flagId: string }>,
-            res: Response
-        ) => {
-            const { projectId, flagId } = req.params;
+        "/:flagId",
+        async (req: Request<{ flagId: string }>, res: Response) => {
+            const { flagId } = req.params;
 
-            if (!projectId || !flagId) return res.status(400).send();
+            if (!flagId) return res.status(400).send();
 
-            const deleted = await flagsRepository.deleteProject(
-                projectId,
-                flagId
-            );
+            const deleted = await flagsRepository.delete(flagId);
 
             if (!deleted)
                 return res
                     .status(400)
-                    .send(`Project ${projectId} could not be deleted!`);
+                    .send(`Flag ${flagId} could not be deleted!`);
 
-            res.status(200).send(`Project ${projectId} deleted!`);
+            res.status(200).send(`Flag ${flagId} deleted!`);
         }
     );
 

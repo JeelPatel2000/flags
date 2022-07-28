@@ -12,7 +12,7 @@ export class ProjectRepository
             .where({ userId: userId });
         return projects as Promise<Project[]>;
     }
-    getProjectById(projectId: string): any {
+    getProjectById(projectId: string): Promise<Project> {
         console.log(projectId);
         const project = this.queryBuilder
             .select("*")

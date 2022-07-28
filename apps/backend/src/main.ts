@@ -6,9 +6,12 @@ import { getConfig } from "./config";
 import { IUserRepository } from "./repository/interfaces/IUserRepository";
 import { UserRepository } from "./repository/UserRepository";
 import * as cors from "cors";
-import { ProjectRouter } from "./routes/Project/project-router";
+import { projectRouter } from "./routes/Project/project-router";
 import { IProjectRepository } from "./repository/interfaces/IProjectRepository";
 import { ProjectRepository } from "./repository/ProjectRepository";
+import { flagsRouter } from "./routes/Flags/flags-router";
+import { IFlagsRepository } from "./repository/interfaces/IFlagsRepository";
+import { FlagsRepository } from "./repository/FlagsRepository";
 
 config();
 
@@ -40,6 +43,7 @@ const projectRepository: IProjectRepository = new ProjectRepository(
     knexdb,
     "projects"
 );
+const flagsRepository: IFlagsRepository = new FlagsRepository(knexdb, "flags");
 
 const app = express();
 
@@ -57,7 +61,8 @@ app.use(express.json());
 
 // Routes
 app.use("/auth", authRouter(userRepository));
-app.use("/projects", ProjectRouter(projectRepository));
+app.use("/projects", projectRouter(projectRepository));
+app.use("/flags", flagsRouter(flagsRepository));
 
 const PORT = process.env.PORT || 4300;
 app.listen(PORT, () => console.log(`Server stared on port ${PORT}`));

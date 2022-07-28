@@ -10,5 +10,6 @@ export interface Flag {
 
 export interface IFlagsRepository extends IBaseRepository<Flag> {
     getAllFlagsForAProject(projectId: string): Promise<Flag[]>;
-    deleteProject(projectId: string, flagId: string): Promise<boolean>;
+    deleteFlag(projectId: string, flagId: string): Promise<boolean>;
+    createWithUUID(item: Flag): Promise<Flag>;
 }
