@@ -30,13 +30,18 @@ export function flagsRouter(flagsRepository: IFlagsRepository) {
             const { name, description, projectId, state } = req.body;
 
             const uuid = randomUUID();
-            const flagId = await flagsRepository.createWithUUID({
-                id: uuid,
-                description: description,
-                name: name,
-                projectId: projectId,
-                state: state,
-            });
+            try {
+                const flagId = await flagsRepository.createWithUUID({
+                    id: uuid,
+                    description: description,
+                    name: name,
+                    projectId: projectId,
+                    state: state,
+                });
+            } catch (err) {
+                console.log(`Error: ${err}`);
+                return res.status(400).send("Cannot create flag!");
+            }
 
             res.send(`Flag Id: ${uuid}`);
         }
