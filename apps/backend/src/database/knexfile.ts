@@ -15,6 +15,7 @@ const config: { [key: string]: Knex.Config } = {
             user: "root",
             password: "Test123#",
             database: "flags",
+            connectTimeout: 6000,
         },
     },
     production: {

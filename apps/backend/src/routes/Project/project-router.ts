@@ -4,11 +4,11 @@ import { IProjectRepository } from "../../repository/interfaces/IProjectReposito
 import { RequestSchema } from "../Authentication/validator";
 import { ProjectPostSchema } from "./validator";
 
-export function ProjectRouter(projectRepository: IProjectRepository) {
+export function projectRouter(projectRepository: IProjectRepository) {
     const router = Router();
 
     router.get(
-        "/:userId",
+        "/user/:userId",
         async (req: Request<{ userId: string }>, res: Response) => {
             const userId = req.params.userId;
 
@@ -39,7 +39,7 @@ export function ProjectRouter(projectRepository: IProjectRepository) {
     );
 
     router.get(
-        "/project/:projectId",
+        "/:projectId",
         async (req: Request<{ projectId: string }>, res: Response) => {
             const projectId = req.params.projectId;
             console.log("Called");
