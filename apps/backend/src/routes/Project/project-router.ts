@@ -42,7 +42,6 @@ export function projectRouter(projectRepository: IProjectRepository) {
         "/:projectId",
         async (req: Request<{ projectId: string }>, res: Response) => {
             const projectId = req.params.projectId;
-            console.log("Called");
             const project = await projectRepository.getProjectById(projectId);
 
             res.send(`${JSON.stringify(project)}`);

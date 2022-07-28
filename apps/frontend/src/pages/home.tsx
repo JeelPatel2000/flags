@@ -1,6 +1,6 @@
 import { Box, Image } from "@chakra-ui/react";
 import { Button } from "../components";
-import { FiArrowUpRight, FiFlag } from "react-icons/fi";
+import { FiArrowUpRight, FiFile, FiFlag, FiFolderPlus } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getCurrentUser } from "../services/authService";
@@ -77,6 +77,29 @@ const Home = () => {
                                 </Box>
                             </Link>
                         ))}
+                    </div>
+                ) : projects ? (
+                    <div className="flex justify-center">
+                        <div className="pattern-dots-xl max-w-xl text-gray-100 p-8 mt-8 flex flex-col justify-center items-center border-2 border-dashed rounded">
+                            <p>
+                                <FiFolderPlus className="w-8 h-8 text-gray-600" />
+                            </p>
+                            <p className="text-xl mt-3 font-semibold text-gray-600">
+                                No Projects
+                            </p>
+                            <p className="mt-2 text-gray-400 font-mediumg flex flex-col sm:flex-row">
+                                Start by referring the{" "}
+                                <Button
+                                    type="link"
+                                    margin="mx-1"
+                                    width="w-fit"
+                                    leftIcon={<FiFile />}
+                                >
+                                    Docs.
+                                </Button>
+                                Or create using the button.
+                            </p>
+                        </div>
                     </div>
                 ) : (
                     <div className="w-full">
