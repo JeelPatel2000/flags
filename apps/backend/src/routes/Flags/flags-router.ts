@@ -78,7 +78,7 @@ export function flagsRouter(
 
     router.patch(
         "/:flagId",
-        validator.body(flagsPatchSchema),
+
         async (
             req: ValidatedRequest<RequestBodySchema<FlagsPatchSchema>>,
             res: Response
@@ -96,7 +96,6 @@ export function flagsRouter(
                 if (!updated)
                     return res.status(400).send(`Flag ${flagId} not updated!`);
             } catch (err) {
-                console.log(err);
                 return res
                     .status(400)
                     .send(`Error while updated flag ${flagId}`);

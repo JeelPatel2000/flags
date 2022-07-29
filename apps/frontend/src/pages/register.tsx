@@ -48,13 +48,12 @@ export default function Register() {
 
     const doSubmit = async () => {
         try {
-            const response = await authService.register(data);
-            console.log(response);
-            authService.loginWithJwt(response.headers["authorization"]);
+            const { data: response } = await authService.register(data);
+            authService.loginWithJwt(response.token);
             window.location.href = "/";
         } catch (error: any) {
             if (error.response && error.response.status === 400) {
-                setErrors({ ...errors, email: error.response.data });
+                setErrors({ ...errors, email: error.response.data.error });
             } else {
                 setApiError(error.response.data);
             }

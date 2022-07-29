@@ -20,6 +20,5 @@ export async function getProjectById(projectId: string) {
 
 export async function deleteProject(projectId: string) {
     const result = await http.delete(`${apiEndpoint}/${projectId}`);
-    console.log(result);
     return result;
 }

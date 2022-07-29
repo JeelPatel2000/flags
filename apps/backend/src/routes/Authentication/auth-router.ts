@@ -50,7 +50,6 @@ export function authRouter(userRepository: IUserRepository) {
 
                 res.send(token);
             } catch (error) {
-                console.log(error);
                 res.status(400);
             }
         }

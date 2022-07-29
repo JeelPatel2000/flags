@@ -32,7 +32,6 @@ export function flagsSubsribeRouter(clients: Client[]) {
             clients.push(newClient);
 
             req.on("close", () => {
-                console.log(`${clientId} Connection closed`);
                 // clients = clients.filter(client => client.id !== clientId);
             });
         }

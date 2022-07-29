@@ -40,8 +40,6 @@ const knexdb = knex({
 
 const testConnection = knexdb.raw("SELECT 1+1");
 
-console.log(testConnection);
-
 const userRepository: IUserRepository = new UserRepository(knexdb, "users");
 const projectRepository: IProjectRepository = new ProjectRepository(
     knexdb,

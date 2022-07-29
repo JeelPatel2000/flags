@@ -9,22 +9,25 @@ import Loading from "../components/Loading";
 
 const Projects = () => {
     const [projects, setProjects] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
 
     const user = getCurrentUser();
 
     useEffect(() => {
         const fetchProjects = async () => {
+            setLoading(true);
             const { data: res } = await getAllProjectsForUser(user.id);
             setProjects(res);
+            setLoading(false);
         };
 
         fetchProjects();
     }, [user.id]);
 
-    if (!projects || projects.length < 1) return <Loading />;
+    if (loading || !projects) return <Loading />;
 
     return (
-        <div className="mx-auto mt-10 px-4 max-w-2xl">
+        <div className="sm:mx-auto mt-10 px-4 max-w-full sm:max-w-2xl">
             <h1 className="uppercase font-semibold">Projects</h1>
             {projects.length > 0 ? (
                 <div className="mt-6 flex flex-col">
@@ -71,7 +74,7 @@ const Projects = () => {
                                     </thead>
                                     <tbody className="divide-y divide-gray-200 bg-white">
                                         {projects.map((project) => (
-                                            <tr key={project._id}>
+                                            <tr key={project.id}>
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                                                     {project.name}
                                                 </td>

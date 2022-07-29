@@ -17,6 +17,13 @@ export const addFlag = async (flag: any) => {
 export const deleteFlag = async (flagId: string) => {
     const result = await http.delete(`${apiEndpoint}/${flagId}`);
     return result;
-}
+};
 
-
+export const updateFlag = async (flag: any) => {
+    const result = await http.patch(`${apiEndpoint}/${flag.id}`, {
+        name: flag.name,
+        description: flag.description,
+        state: !!flag.state,
+    });
+    return result;
+};

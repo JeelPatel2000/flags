@@ -129,14 +129,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: any) => {
                                             </a>
                                         ))}
                                     </div>
-                                    <div className="mt-8">
-                                        <h3
-                                            className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider"
-                                            id="mobile-teams-headline"
-                                        >
-                                            Teams
-                                        </h3>
-                                    </div>
                                 </nav>
                             </div>
                         </div>

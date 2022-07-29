@@ -1,8 +1,13 @@
 import {
     FormControl,
-    FormErrorMessage,
     FormLabel,
-    Input,
+    Switch,
+    Flex,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
+    Box,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -11,113 +16,29 @@ import {
     ModalHeader,
     ModalOverlay,
     useDisclosure,
-    Switch,
-    Flex,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuList,
-    Box,
-    Alert,
-    AlertIcon,
+    useToast,
 } from "@chakra-ui/react";
-import Joi from "joi";
 import { useEffect, useState } from "react";
-import { FiPlus, FiFlag, FiSettings, FiTrash } from "react-icons/fi";
+import { FiFlag, FiSettings, FiMoreVertical } from "react-icons/fi";
 import { useParams } from "react-router-dom";
 import { Button } from "../components";
+import Loading from "../components/Loading";
+import AddFlagModal from "../components/Modals/AddFlagModal";
+import DeleteModal from "../components/Modals/DeleteModal";
 import {
-    addFlag,
     deleteFlag,
     getFlagsForProject,
+    updateFlag,
 } from "../services/flagService";
 import { deleteProject, getProjectById } from "../services/projectService";
 
 const ProjectDetails = () => {
-    const { isOpen, onOpen, onClose } = useDisclosure();
     const [project, setProject] = useState<any>({});
-    const [flags, setFlags] = useState<any>([]);
+    const [loading, setLoading] = useState(true);
+    const [flags, setFlags] = useState<any[]>([]);
     const { projectId } = useParams();
-
-    const [apiError, setApiError] = useState<string | null>(null);
-    const [data, setData] = useState<any>({
-        name: "",
-    });
-
-    const [errors, setErrors] = useState<any>({
-        name: "",
-        description: "",
-    });
-
-    const schema: any = {
-        name: Joi.string().required().label("Name"),
-        description: Joi.string().required().label("Description"),
-    };
-
-    const doSubmit = async () => {
-        try {
-            console.log(data);
-            const result = await addFlag({
-                ...data,
-                projectId,
-                state: false,
-            });
-            if (result) {
-                window.location.reload();
-                onClose();
-            }
-        } catch (error: any) {
-            console.log(error);
-            if (error.response && error.response.status === 400) {
-                setErrors({ ...errors, name: error.response.data });
-            } else {
-                setApiError(error.response.data);
-            }
-        }
-    };
-
-    const validate = () => {
-        const options = { abortEarly: false };
-        const { error } = Joi.object(schema).validate(data, options);
-        if (!error) return null;
-        const errors: any = {};
-        for (const item of error.details) errors[item.path[0]] = item.message;
-        return errors;
-    };
-
-    const validateProperty = ({ name, value }: any) => {
-        const obj = { [name]: value };
-        const Joischema = { [name]: schema[name] };
-        const { error } = Joi.object(Joischema).validate(obj);
-        return error ? error.details[0].message : null;
-    };
-
-    const handleSubmit = (e: any) => {
-        e.preventDefault();
-        const errors = validate();
-        setErrors(errors);
-        if (errors) return;
-        doSubmit();
-    };
-
-    const handleChange = ({ currentTarget: input }: any) => {
-        setApiError(null);
-        setErrors({
-            name: "",
-            description: "",
-        });
-        const errorMessage = validateProperty(input);
-        if (errors) {
-            // @ts-ignore
-            if (errorMessage) errors[input.name] = errorMessage;
-            // @ts-ignore
-            else delete errors[input.name];
-        }
-
-        setData({ ...data, [input.name]: input.value });
-        setErrors(errors);
-    };
-
+    const { isOpen, onClose } = useDisclosure();
+    const toast = useToast();
     const handleProjectDelete = async () => {
         if (projectId) {
             const result = await deleteProject(projectId);
@@ -130,20 +51,18 @@ const ProjectDetails = () => {
 
     useEffect(() => {
         const fetchGroups = async (projectId: string) => {
+            setLoading(true);
             const [project] = await getProjectById(projectId);
             const flags = await getFlagsForProject(projectId);
             setProject(project);
             setFlags(flags);
+            setLoading(false);
         };
 
         if (projectId) {
             fetchGroups(projectId);
         }
     }, []);
-
-    // const handleSaveFlags = () => {
-
-    // }
 
     const handleDeleteFlag = async (flagId: string) => {
         const result = await deleteFlag(flagId);
@@ -152,12 +71,41 @@ const ProjectDetails = () => {
         }
     };
 
+    const handleUpdate = async (flag: any) => {
+        const result = await updateFlag(flag);
+        if (result) {
+            const updatedFlags = flags.map((f: any) => {
+                if (f.id === flag.id) {
+                    return {
+                        ...f,
+                        state: f.state === 0 ? 1 : 0,
+                    };
+                }
+                return f;
+            });
+            setFlags(updatedFlags);
+            toast({
+                title: "Flag Updated",
+                description: "We've updated your flag",
+                position: "top-right",
+                status: "success",
+                duration: 4000,
+                isClosable: true,
+            });
+        }
+    };
+
+    if (loading) return <Loading />;
+
     return (
         <div>
             <div className="bg-white px-4 py-5 border-b border-gray-200 sm:px-6">
                 <div className="-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-nowrap">
                     <div className="ml-4 mt-2">
-                        <h3 className="text-lg leading-6 font-medium text-gray-900">
+                        <p className="text-sm font-medium text-blue-600">
+                            {project.id}
+                        </p>
+                        <h3 className="text-2xl leading-6 font-semibold mt-1 text-gray-900">
                             {project.name}
                         </h3>
                         <p className="mt-1 text-gray-500 font-medium">
@@ -172,72 +120,17 @@ const ProjectDetails = () => {
                                         <FiSettings className=" w-6 h-6" />
                                     </Button>
                                 </MenuButton>
-                                <MenuList>
-                                    <MenuItem onClick={handleProjectDelete}>
-                                        <FiTrash className="mr-3" /> Delete
-                                        Project
-                                    </MenuItem>
+                                <MenuList p="0" rounded="sm">
+                                    <p className="px-2 py-3 rounded cursor-pointer hover:bg-red-600 hover:text-white">
+                                        <DeleteModal
+                                            type="Project"
+                                            name={project.name}
+                                            handleDelete={handleProjectDelete}
+                                        />
+                                    </p>
                                 </MenuList>
                             </Menu>
-                            <Button leftIcon={<FiPlus />} onClick={onOpen}>
-                                Add flag
-                            </Button>
-                            <Modal isOpen={isOpen} onClose={onClose}>
-                                <ModalOverlay />
-                                <ModalContent>
-                                    <ModalHeader>Add Feature Flag</ModalHeader>
-                                    <ModalCloseButton />
-                                    <ModalBody>
-                                        {apiError && (
-                                            <Alert status="error">
-                                                <AlertIcon />
-                                                {apiError}
-                                            </Alert>
-                                        )}
-                                        <FormControl>
-                                            <FormLabel>Name</FormLabel>
-                                            <Input
-                                                name="name"
-                                                rounded="sm"
-                                                type="text"
-                                                onChange={handleChange}
-                                                placeholder="Enter name"
-                                            />
-                                            {errors && errors.name && (
-                                                <FormErrorMessage>
-                                                    {errors.name}
-                                                </FormErrorMessage>
-                                            )}
-                                        </FormControl>
-                                        <FormControl className="mt-3">
-                                            <FormLabel>Description</FormLabel>
-                                            <Input
-                                                name="description"
-                                                rounded="sm"
-                                                type="text"
-                                                onChange={handleChange}
-                                                placeholder="Enter description"
-                                            />
-                                            {errors && errors.description && (
-                                                <FormErrorMessage>
-                                                    {errors.description}
-                                                </FormErrorMessage>
-                                            )}
-                                        </FormControl>
-                                    </ModalBody>
-
-                                    <ModalFooter>
-                                        <div>
-                                            <Button
-                                                onClick={handleSubmit}
-                                                disabled={validate()}
-                                            >
-                                                Save
-                                            </Button>
-                                        </div>
-                                    </ModalFooter>
-                                </ModalContent>
-                            </Modal>
+                            <AddFlagModal projectId={projectId} />
                         </div>
                     </div>
                 </div>
@@ -248,65 +141,108 @@ const ProjectDetails = () => {
                 </p>
                 {flags?.length > 0 ? (
                     <div>
-                        <div className="max-w-lg rounded flex flex-col items-center justify-center mx-auto mt-12 border-2 p-6">
+                        <div className="max-w-xl rounded flex flex-col items-center justify-center mx-auto mt-12 p-6">
                             {flags?.map((flag: any) => {
                                 return (
-                                    <div className="w-full mx-auto max-w-xs border-b mb-3 pb-2">
-                                        <FormControl
-                                            w="full"
-                                            as={Flex}
-                                            alignItems="center"
-                                            justifyContent="space-between"
-                                        >
-                                            <FormLabel m="0" mr="3" width="4xl">
-                                                {flag.name}
-                                                <p className="text-gray-400 font-normal">
-                                                    {flag.description}
-                                                </p>
-                                            </FormLabel>
-                                            <Box width="sm">
+                                    <div className="w-full bg-gray-50 rounded border px-6 py-3 mb-3 ">
+                                        <div className="flex justify-between max-w-lg items-center">
+                                            <FormControl
+                                                width="fit-content"
+                                                as={Flex}
+                                            >
+                                                <div className="max-w-7xl">
+                                                    <FormLabel m="0" mr="3">
+                                                        <p className="text-gray-600 text-xs">
+                                                            {flag.id}
+                                                        </p>
+                                                        <p className="text-xl mt-1 text-blue-700 font-semibold">
+                                                            {flag.name}
+                                                        </p>
+                                                        <p className="text-gray-500 font-normal">
+                                                            {flag.description}
+                                                        </p>
+                                                    </FormLabel>
+                                                </div>
+                                            </FormControl>
+                                            <Box>
                                                 <Switch
                                                     value={flag.state}
                                                     size="lg"
                                                     colorScheme="green"
-                                                    onChange={() => {
-                                                        const updatedFlags =
-                                                            flags.map(
-                                                                (f: any) => {
-                                                                    if (
-                                                                        f.id ===
-                                                                        flag.id
-                                                                    ) {
-                                                                        return {
-                                                                            ...f,
-                                                                            state:
-                                                                                f.state ===
-                                                                                0
-                                                                                    ? 1
-                                                                                    : 0,
-                                                                        };
-                                                                    }
-                                                                    return f;
-                                                                }
-                                                            );
-                                                        setFlags(updatedFlags);
-                                                    }}
+                                                    onChange={() =>
+                                                        handleUpdate(flag)
+                                                    }
                                                 />
                                             </Box>
-                                            <Box
-                                                onClick={() =>
-                                                    handleDeleteFlag(flag.id)
-                                                }
-                                            >
-                                                <FiTrash />
+                                            <Box>
+                                                <Menu>
+                                                    <MenuButton>
+                                                        <Button type="icon">
+                                                            <FiMoreVertical className=" w-6 h-6" />
+                                                        </Button>
+                                                    </MenuButton>
+                                                    <MenuList
+                                                        p="0"
+                                                        rounded="sm"
+                                                    >
+                                                        <p className="px-2 py-3 rounded cursor-pointer hover:bg-red-600 hover:text-white">
+                                                            <DeleteModal
+                                                                type="Flag"
+                                                                name={flag.name}
+                                                                handleDelete={() =>
+                                                                    handleDeleteFlag(
+                                                                        flag.id
+                                                                    )
+                                                                }
+                                                            />
+                                                        </p>
+                                                    </MenuList>
+                                                </Menu>
                                             </Box>
-                                        </FormControl>
+                                        </div>
+                                        <Modal
+                                            isOpen={isOpen}
+                                            onClose={() => {
+                                                onClose();
+                                            }}
+                                        >
+                                            <ModalOverlay />
+                                            <ModalContent>
+                                                <ModalHeader>
+                                                    <p className="flex items-center text-blue-600">
+                                                        <span className="mt-1">
+                                                            Update this flag
+                                                        </span>
+                                                    </p>
+                                                </ModalHeader>
+                                                <ModalCloseButton />
+                                                <ModalBody>
+                                                    <p className="text-lg font-medium">
+                                                        Are you sure you want to
+                                                        update this {flag.name}{" "}
+                                                        flag?
+                                                    </p>
+                                                </ModalBody>
+
+                                                <ModalFooter>
+                                                    <div>
+                                                        <Button
+                                                            onClick={() =>
+                                                                handleUpdate(
+                                                                    flag
+                                                                )
+                                                            }
+                                                            type="secondary"
+                                                        >
+                                                            Update
+                                                        </Button>
+                                                    </div>
+                                                </ModalFooter>
+                                            </ModalContent>
+                                        </Modal>
                                     </div>
                                 );
                             })}
-                        </div>
-                        <div className="flex justify-center mt-8">
-                            <Button>Save Flags</Button>
                         </div>
                     </div>
                 ) : (
