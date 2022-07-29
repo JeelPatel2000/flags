@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body></body>
+    <script>
+        console.log("Window loaded");
+        const sse = new EventSource(
+            "http://localhost:4300/sse/subscribeToFlagUpdates/123"
+        );
+        sse.onmessage = (event) => {
+            console.log(event.data);
+        };
+        sse.onopen = () => {
+            console.log("connection to stream has been opened");
+        };
+        sse.onerror = (error) => {
+            console.log("An error has occurred while receiving stream", error);
+        };
+    </script>
+</html>

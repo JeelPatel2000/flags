@@ -1,4 +1,5 @@
 import { randomUUID } from "crypto";
+import { EventEmitter } from "events";
 import { Request, Response, Router } from "express";
 import { createValidator, ValidatedRequest } from "express-joi-validation";
 import { IFlagsRepository } from "../../repository/interfaces/IFlagsRepository";
@@ -10,7 +11,10 @@ import {
     FlagsPostSchema,
 } from "./validator";
 
-export function flagsRouter(flagsRepository: IFlagsRepository) {
+export function flagsRouter(
+    flagsRepository: IFlagsRepository,
+    eventEmitter: EventEmitter
+) {
     const router = Router();
     const validator = createValidator();
 
@@ -97,6 +101,10 @@ export function flagsRouter(flagsRepository: IFlagsRepository) {
                     .status(400)
                     .send(`Error while updated flag ${flagId}`);
             }
+
+            eventEmitter.emit("flagsUpdated", {
+                projectId: "1",
+            });
 
             res.status(200).send(`Flag updated!`);
         }

@@ -1,13 +1,13 @@
-import { JwtPayload } from "jsonwebtoken";
 import { Knex } from "knex";
 import { GlobalConfig } from "../config";
+import { AuthenticatedUser } from "../middlerwares/authorization-middlerware";
 
 export declare type withAuthFunctions = {
     db: Knex;
 };
 
 export declare type withAuthenticatedUser = {
-    user?: string | JwtPayload;
+    user: AuthenticatedUser;
 };
 
 export declare type Config = {
