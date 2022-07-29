@@ -3,8 +3,9 @@ import config from "../config";
 
 axios.defaults.baseURL = config.DEV_API_URL;
 
-axios.defaults.headers.common["authorization"] =
-    localStorage.getItem("token") || "";
+axios.defaults.headers.common["Authorization"] = `Bearer ${
+    localStorage.getItem("token") || ""
+}`;
 
 axios.interceptors.response.use(undefined, (error: any) => {
     const expectedError =
@@ -19,7 +20,7 @@ axios.interceptors.response.use(undefined, (error: any) => {
     return Promise.reject(error);
 });
 function setJwt(jwt: any) {
-    axios.defaults.headers.common["authorization"] = jwt;
+    axios.defaults.headers.common["Authorization"] = `Bearer ${jwt}`;
 }
 
 const http = {

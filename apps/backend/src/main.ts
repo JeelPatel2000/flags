@@ -12,6 +12,10 @@ import { ProjectRepository } from "./repository/ProjectRepository";
 import { flagsRouter } from "./routes/Flags/flags-router";
 import { IFlagsRepository } from "./repository/interfaces/IFlagsRepository";
 import { FlagsRepository } from "./repository/FlagsRepository";
+import { Client } from "./models/Interfaces/Client";
+import { flagsSubsribeRouter } from "./routes/Flags/flags-subscribe-router";
+import { EventEmitter } from "events";
+import { authMiddleware } from "./middlerwares/authorization-middlerware";
 
 config();
 
@@ -47,6 +51,18 @@ const flagsRepository: IFlagsRepository = new FlagsRepository(knexdb, "flags");
 
 const app = express();
 
+const clients = new Array<Client>();
+const eventEmitter = new EventEmitter();
+
+eventEmitter.on("flagsUpdated", (data: { projectId: string }) => {
+    clients.forEach((client) => {
+        if (client.projectId == data.projectId)
+            client.response.write("data: New Updates \n\n", (err) => {
+                if (err) console.log(`Error ${err}`);
+            });
+    });
+});
+
 // Middlerwares
 app.use(
     cors({
@@ -58,11 +74,13 @@ app.use((req, _, next) => {
     next();
 });
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 // Routes
 app.use("/auth", authRouter(userRepository));
-app.use("/projects", projectRouter(projectRepository));
-app.use("/flags", flagsRouter(flagsRepository));
+app.use("/projects", authMiddleware, projectRouter(projectRepository));
+app.use("/flags", authMiddleware, flagsRouter(flagsRepository, eventEmitter));
+app.use("/sse", flagsSubsribeRouter(clients));
 
 const PORT = process.env.PORT || 4300;
 app.listen(PORT, () => console.log(`Server stared on port ${PORT}`));
