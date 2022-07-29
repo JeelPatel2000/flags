@@ -1,12 +1,18 @@
 import { randomUUID } from "crypto";
 import { Request, Response, Router } from "express";
-import { ValidatedRequest } from "express-joi-validation";
+import { createValidator, ValidatedRequest } from "express-joi-validation";
 import { IFlagsRepository } from "../../repository/interfaces/IFlagsRepository";
-import { RequestSchema } from "../Authentication/validator";
-import { FlagsPostSchema } from "./validator";
+import { RequestBodySchema } from "../Authentication/validator";
+import {
+    flagsPatchSchema,
+    FlagsPatchSchema,
+    flagsPostSchema,
+    FlagsPostSchema,
+} from "./validator";
 
 export function flagsRouter(flagsRepository: IFlagsRepository) {
     const router = Router();
+    const validator = createValidator();
 
     router.get(
         "/project/:projectId",
@@ -23,8 +29,9 @@ export function flagsRouter(flagsRepository: IFlagsRepository) {
 
     router.post(
         "/",
+        validator.body(flagsPostSchema),
         async (
-            req: ValidatedRequest<RequestSchema<FlagsPostSchema>>,
+            req: ValidatedRequest<RequestBodySchema<FlagsPostSchema>>,
             res: Response
         ) => {
             const { name, description, projectId, state } = req.body;
@@ -62,6 +69,36 @@ export function flagsRouter(flagsRepository: IFlagsRepository) {
                     .send(`Flag ${flagId} could not be deleted!`);
 
             res.status(200).send(`Flag ${flagId} deleted!`);
+        }
+    );
+
+    router.patch(
+        "/:flagId",
+        validator.body(flagsPatchSchema),
+        async (
+            req: ValidatedRequest<RequestBodySchema<FlagsPatchSchema>>,
+            res: Response
+        ) => {
+            const { flagId } = req.params;
+            const { name, description, state } = req.body;
+
+            try {
+                const updated = await flagsRepository.update(flagId, {
+                    name,
+                    description,
+                    state,
+                });
+
+                if (!updated)
+                    return res.status(400).send(`Flag ${flagId} not updated!`);
+            } catch (err) {
+                console.log(err);
+                return res
+                    .status(400)
+                    .send(`Error while updated flag ${flagId}`);
+            }
+
+            res.status(200).send(`Flag updated!`);
         }
     );
 
