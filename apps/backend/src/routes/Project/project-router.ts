@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { Request, Response, Router } from "express";
 import { ValidatedRequest } from "express-joi-validation";
 import { IProjectRepository } from "../../repository/interfaces/IProjectRepository";
@@ -28,13 +29,20 @@ export function projectRouter(projectRepository: IProjectRepository) {
         ) => {
             const { name, description, userId } = req.body;
 
-            const projectId = await projectRepository.create({
-                description: description,
-                name: name,
-                userId: userId,
-            });
+            const uuid = randomUUID();
 
-            res.send(`Project Id: ${projectId}`);
+            try {
+                await projectRepository.createWithUUID({
+                    id: uuid,
+                    description: description,
+                    name: name,
+                    userId: userId,
+                });
+            } catch (err) {
+                console.log(err);
+                return res.status(400).send("Error while creating project");
+            }
+            res.send(`Project Id: ${uuid}`);
         }
     );
 

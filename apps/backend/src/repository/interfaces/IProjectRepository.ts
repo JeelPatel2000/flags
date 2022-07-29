@@ -10,4 +10,5 @@ export interface Project {
 export interface IProjectRepository extends IBaseRepository<Project> {
     getAllProjectsForUser(userId: string): Promise<Project[]>;
     getProjectById(projectId: string): Promise<Project>;
+    createWithUUID(item: Project): Promise<Project>;
 }

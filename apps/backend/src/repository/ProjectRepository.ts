@@ -5,6 +5,13 @@ export class ProjectRepository
     extends BaseRepository<Project>
     implements IProjectRepository
 {
+    async createWithUUID(item: Project): Promise<Project> {
+        const [output] = await this.queryBuilder
+            .insert<Project>(item)
+            .returning("id");
+
+        return output as Promise<Project>;
+    }
     getAllProjectsForUser(userId: string): Promise<Project[]> {
         const projects = this.queryBuilder
             .select("*")

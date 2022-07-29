@@ -31,7 +31,7 @@ export function flagsRouter(flagsRepository: IFlagsRepository) {
 
             const uuid = randomUUID();
             try {
-                const flagId = await flagsRepository.createWithUUID({
+                await flagsRepository.createWithUUID({
                     id: uuid,
                     description: description,
                     name: name,

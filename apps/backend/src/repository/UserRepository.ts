@@ -16,4 +16,10 @@ export class UserRepository
             console.log(error);
         }
     }
+
+    async createWithUUID(item: User): Promise<User> {
+        const output = await this.queryBuilder.insert<User>(item);
+
+        return output;
+    }
 }

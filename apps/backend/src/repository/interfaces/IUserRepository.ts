@@ -9,4 +9,5 @@ export interface User {
 
 export interface IUserRepository extends IBaseRepository<User> {
     findOneByEmail(email: string): Promise<User>;
+    createWithUUID(item: User): Promise<User>;
 }

@@ -11,6 +11,7 @@ import {
 import * as jwt from "jsonwebtoken";
 import { AuthConfig } from "../../config";
 import * as bcrypt from "bcrypt";
+import { randomUUID } from "crypto";
 
 export function authRouter(userRepository: IUserRepository) {
     const router: Router = Router();
@@ -68,16 +69,17 @@ export function authRouter(userRepository: IUserRepository) {
 
                 const existingUser = await userRepository.findOneByEmail(email);
 
-                if (existingUser !== undefined) {
+                if (existingUser !== undefined)
                     return res
                         .status(400)
                         .send({ error: "Users already exist" });
-                }
 
                 const salt = await bcrypt.genSalt(10);
                 const hashedPassword = await bcrypt.hash(password, salt);
+                const userId = randomUUID();
 
-                const userId = await userRepository.create({
+                await userRepository.createWithUUID({
+                    id: userId,
                     email: email,
                     password: hashedPassword,
                     name: name,
@@ -87,6 +89,7 @@ export function authRouter(userRepository: IUserRepository) {
                     { userId: userId, email: email, name: name },
                     config.jwtPrivateKey
                 );
+
                 res.send({ token });
             } catch (error) {
                 console.log(error);
