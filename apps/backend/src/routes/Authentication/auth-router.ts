@@ -4,7 +4,7 @@ import { IUserRepository } from "../../repository/interfaces/IUserRepository";
 import { logout } from "./auth-handlers";
 import {
     loginPostSchema,
-    RequestSchema,
+    RequestBodySchema,
     RegisterPostSchema,
     registerPostSchema,
 } from "./validator";
@@ -21,7 +21,7 @@ export function authRouter(userRepository: IUserRepository) {
         "/login",
         validator.body(loginPostSchema),
         async (
-            req: ValidatedRequest<RequestSchema<RegisterPostSchema>>,
+            req: ValidatedRequest<RequestBodySchema<RegisterPostSchema>>,
             res: Response
         ) => {
             try {
@@ -60,7 +60,7 @@ export function authRouter(userRepository: IUserRepository) {
         "/register",
         validator.body(registerPostSchema),
         async (
-            req: ValidatedRequest<RequestSchema<RegisterPostSchema>>,
+            req: ValidatedRequest<RequestBodySchema<RegisterPostSchema>>,
             res: Response
         ) => {
             try {

@@ -22,6 +22,10 @@ export interface RegisterPostSchema {
     name: string;
 }
 
-export interface RequestSchema<T> extends ValidatedRequestSchema {
+export interface RequestBodySchema<T> extends ValidatedRequestSchema {
     [ContainerTypes.Body]: T;
+}
+
+export interface RequestParamScheme<T> extends ValidatedRequestSchema {
+    [ContainerTypes.Params]: T;
 }

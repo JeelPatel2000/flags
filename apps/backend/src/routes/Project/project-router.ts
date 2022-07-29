@@ -2,7 +2,7 @@ import { randomUUID } from "crypto";
 import { Request, Response, Router } from "express";
 import { ValidatedRequest } from "express-joi-validation";
 import { IProjectRepository } from "../../repository/interfaces/IProjectRepository";
-import { RequestSchema } from "../Authentication/validator";
+import { RequestBodySchema } from "../Authentication/validator";
 import { ProjectPostSchema } from "./validator";
 
 export function projectRouter(projectRepository: IProjectRepository) {
@@ -24,7 +24,7 @@ export function projectRouter(projectRepository: IProjectRepository) {
     router.post(
         "/",
         async (
-            req: ValidatedRequest<RequestSchema<ProjectPostSchema>>,
+            req: ValidatedRequest<RequestBodySchema<ProjectPostSchema>>,
             res: Response
         ) => {
             const { name, description, userId } = req.body;
