@@ -73,7 +73,7 @@ const ProjectDetails = () => {
     };
 
     const handleUpdate = async (flag: any) => {
-        const result = await updateFlag(flag);
+        const result = await updateFlag(flag, project.id);
         if (result) {
             const updatedFlags = flags.map((f: any) => {
                 if (f.id === flag.id) {

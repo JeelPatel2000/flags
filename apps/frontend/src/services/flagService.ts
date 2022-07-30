@@ -19,11 +19,12 @@ export const deleteFlag = async (flagId: string) => {
     return result;
 };
 
-export const updateFlag = async (flag: any) => {
+export const updateFlag = async (flag: any, projectId: string) => {
     const result = await http.patch(`${apiEndpoint}/${flag.id}`, {
         name: flag.name,
         description: flag.description,
         state: !!flag.state,
+        projectId,
     });
     return result;
 };
