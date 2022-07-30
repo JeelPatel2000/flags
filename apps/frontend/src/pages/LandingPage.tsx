@@ -6,6 +6,7 @@ import {
     Switch,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { FiExternalLink } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import Button from "../components/Button";
 import Logo from "../components/Logo";
@@ -90,11 +91,6 @@ export default function LandingPage() {
                                 <Logo />
                             </div>
                             <div className="mt-10">
-                                <div>
-                                    <span className="rounded bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-600 tracking-wide uppercase">
-                                        NEW
-                                    </span>
-                                </div>
                                 <div className="mt-6 sm:max-w-xl">
                                     <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight sm:text-5xl">
                                         Open Source{" "}
@@ -164,7 +160,7 @@ export default function LandingPage() {
                             <div className="relative pl-4 -mr-40 sm:mx-auto sm:max-w-3xl sm:px-0 lg:max-w-none lg:h-full lg:pl-12">
                                 <img
                                     className="w-full rounded-md shadow-xl ring-1 ring-black ring-opacity-5 lg:h-full lg:w-auto lg:max-w-none"
-                                    src="https://tailwindui.com/img/component-images/task-app-rose.jpg"
+                                    src="../assets/dashboard.png"
                                     alt=""
                                 />
                             </div>
@@ -231,11 +227,24 @@ export default function LandingPage() {
                     </div>
                 </div>
 
-                <div className="mt-20">
-                        <p>Read the docs.</p>
-                    <h1>
-                        Access docs. <Link to="/docs">Docs</Link>
-                    </h1>
+                <div className=" mt-12 pattern-diagonal-lines-lg text-gray-100">
+                    <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 lg:flex lg:items-center lg:justify-between">
+                        <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+                            <span className="block text-gray-800">
+                                Ready to dive in?
+                            </span>
+                            <span className="block text-blue-600">
+                                Start by reading the docs.
+                            </span>
+                        </h2>
+                        <div className="mt-8 flex lg:mt-0 lg:flex-shrink-0">
+                            <Link to="/docs">
+                                <Button rightIcon={<FiExternalLink />}>
+                                    Read Docs
+                                </Button>
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </main>
 

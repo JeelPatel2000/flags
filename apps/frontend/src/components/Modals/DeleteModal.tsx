@@ -45,7 +45,7 @@ const DeleteModal = ({
             >
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>
+                    <ModalHeader className="border-b-2">
                         <p className="flex items-center text-red-600">
                             <FiAlertCircle className="w-8 h-8 mr-4 bg-red-100 rounded-full p-1" />
                             <span className="mt-1">Delete {type}</span>

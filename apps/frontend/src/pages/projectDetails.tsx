@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import { FiFlag, FiSettings, FiMoreVertical } from "react-icons/fi";
 import { useParams } from "react-router-dom";
 import { Button } from "../components";
+import Banner from "../components/Banner";
 import Loading from "../components/Loading";
 import AddFlagModal from "../components/Modals/AddFlagModal";
 import DeleteModal from "../components/Modals/DeleteModal";
@@ -144,7 +145,10 @@ const ProjectDetails = () => {
                         <div className="max-w-xl rounded flex flex-col items-center justify-center mx-auto mt-12 p-6">
                             {flags?.map((flag: any) => {
                                 return (
-                                    <div className="w-full bg-gray-50 rounded border px-6 py-3 mb-3 ">
+                                    <div
+                                        className="w-full bg-gray-50 rounded border px-6 py-3 mb-3 "
+                                        key={flag.id}
+                                    >
                                         <div className="flex justify-between max-w-lg items-center">
                                             <FormControl
                                                 width="fit-content"
@@ -255,6 +259,7 @@ const ProjectDetails = () => {
                     </div>
                 )}
             </div>
+            <Banner />
         </div>
     );
 };

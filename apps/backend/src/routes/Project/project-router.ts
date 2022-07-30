@@ -1,11 +1,15 @@
 import { randomUUID } from "crypto";
 import { Request, Response, Router } from "express";
 import { ValidatedRequest } from "express-joi-validation";
+import { IFlagsRepository } from "../../repository/interfaces/IFlagsRepository";
 import { IProjectRepository } from "../../repository/interfaces/IProjectRepository";
 import { RequestBodySchema } from "../Authentication/validator";
 import { ProjectPostSchema } from "./validator";
 
-export function projectRouter(projectRepository: IProjectRepository) {
+export function projectRouter(
+    projectRepository: IProjectRepository,
+    flagsRepository: IFlagsRepository
+) {
     const router = Router();
 
     router.get(
@@ -13,8 +17,19 @@ export function projectRouter(projectRepository: IProjectRepository) {
         async (req: Request<{ userId: string }>, res: Response) => {
             const userId = req.params.userId;
 
-            const userProjects = await projectRepository.getAllProjectsForUser(
+            let userProjects = await projectRepository.getAllProjectsForUser(
                 userId
+            );
+            userProjects = await Promise.all(
+                userProjects.map(async (project) => {
+                    const flags = await flagsRepository.getAllFlagsForAProject(
+                        project.id
+                    );
+                    return {
+                        ...project,
+                        noOfFeatureFlags: flags.length,
+                    };
+                })
             );
 
             res.send(`${JSON.stringify(userProjects)}`);

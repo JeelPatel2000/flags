@@ -76,7 +76,11 @@ app.use(express.urlencoded({ extended: false }));
 
 // Routes
 app.use("/auth", authRouter(userRepository));
-app.use("/projects", authMiddleware, projectRouter(projectRepository));
+app.use(
+    "/projects",
+    authMiddleware,
+    projectRouter(projectRepository, flagsRepository)
+);
 app.use("/flags", authMiddleware, flagsRouter(flagsRepository, eventEmitter));
 app.use("/sse", flagsSubsribeRouter(clients));
 

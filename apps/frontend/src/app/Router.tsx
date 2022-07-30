@@ -35,12 +35,19 @@ const AUTH_ROUTES = [
             { path: "/", component: () => <Home /> },
             { path: "/add_project", component: () => <AddProject /> },
             { path: "/projects", component: () => <Projects /> },
-            { path: "/project_details/:projectId", component: () => <ProjectDetails /> },
+            {
+                path: "/project_details/:projectId",
+                component: () => <ProjectDetails />,
+            },
         ],
     },
     {
         path: "/logout",
         component: () => <Logout />,
+    },
+    {
+        path: "/docs",
+        component: () => <Docs />,
     },
 ];
 
