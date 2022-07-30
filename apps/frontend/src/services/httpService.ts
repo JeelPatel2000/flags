@@ -1,7 +1,7 @@
 import axios from "axios";
 import config from "../config";
 
-axios.defaults.baseURL = config.DEV_API_URL;
+axios.defaults.baseURL = config.PROD_API_URL;
 
 axios.defaults.headers.common["Authorization"] = `Bearer ${
     localStorage.getItem("token") || ""
