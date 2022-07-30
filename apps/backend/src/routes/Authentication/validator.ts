@@ -29,3 +29,7 @@ export interface RequestBodySchema<T> extends ValidatedRequestSchema {
 export interface RequestParamScheme<T> extends ValidatedRequestSchema {
     [ContainerTypes.Params]: T;
 }
+
+export interface RequestQuerySchema<T> extends ValidatedRequestSchema {
+    [ContainerTypes.Query]: T;
+}
