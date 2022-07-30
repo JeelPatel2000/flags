@@ -110,7 +110,9 @@ const AddFlagModal = ({ projectId }: { projectId?: string }) => {
             >
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Add Feature Flag</ModalHeader>
+                    <ModalHeader className="border-b-2 mb-3">
+                        Add Feature Flag
+                    </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         {apiError && (
@@ -120,13 +122,13 @@ const AddFlagModal = ({ projectId }: { projectId?: string }) => {
                             </Alert>
                         )}
                         <FormControl>
-                            <FormLabel>Name</FormLabel>
+                            <FormLabel>Name / Key</FormLabel>
                             <Input
                                 name="name"
                                 rounded="sm"
                                 type="text"
                                 onChange={handleChange}
-                                placeholder="Enter name"
+                                placeholder="Enter your key (eg: searchFeatureFlag)"
                             />
                             {errors && errors.name && (
                                 <FormErrorMessage>

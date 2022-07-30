@@ -6,32 +6,39 @@ import { useEffect, useState } from "react";
 import { getCurrentUser } from "../services/authService";
 import { getAllProjectsForUser } from "../services/projectService";
 import Loading from "../components/Loading";
+import Banner from "../components/Banner";
 
 const images = [1032, 1037, 1065];
 
 const Home = () => {
     const [projects, setProjects] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
 
     const user = getCurrentUser();
 
     useEffect(() => {
         const fetchProjects = async () => {
+            setLoading(true);
             const { data: res } = await getAllProjectsForUser(user.id);
             setProjects(res);
+            setLoading(false);
         };
 
         fetchProjects();
     }, [user.id]);
+    if (loading) return <Loading />;
     return (
         <div className="flex flex-col mx-auto mt-10 px-4 max-w-7xl  justify-center">
             <div>
                 <p className="w-full flex justify-between uppercase my-4 text-gray-600 font-semibold">
                     Projects
-                    <Link to="/projects">
-                        <Button type="link" rightIcon={<FiArrowUpRight />}>
-                            View All
-                        </Button>
-                    </Link>
+                    {projects.length >= 3 && (
+                        <Link to="/projects">
+                            <Button type="link" rightIcon={<FiArrowUpRight />}>
+                                View All
+                            </Button>
+                        </Link>
+                    )}
                 </p>
                 {projects.length > 0 ? (
                     <div className="w-full grid place-items-center xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-y-2  xl:gap-y-6 sm:gap-x-3">
@@ -107,6 +114,7 @@ const Home = () => {
                     </div>
                 )}
             </div>
+            <Banner />
         </div>
     );
 };
