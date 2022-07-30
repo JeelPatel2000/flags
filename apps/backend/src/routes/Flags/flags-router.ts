@@ -78,13 +78,13 @@ export function flagsRouter(
 
     router.patch(
         "/:flagId",
-
+        validator.body(flagsPatchSchema),
         async (
             req: ValidatedRequest<RequestBodySchema<FlagsPatchSchema>>,
             res: Response
         ) => {
             const { flagId } = req.params;
-            const { name, description, state } = req.body;
+            const { name, description, state, projectId } = req.body;
 
             try {
                 const updated = await flagsRepository.update(flagId, {
@@ -102,7 +102,7 @@ export function flagsRouter(
             }
 
             eventEmitter.emit("flagsUpdated", {
-                projectId: "1",
+                projectId,
             });
 
             res.status(200).send(`Flag updated!`);

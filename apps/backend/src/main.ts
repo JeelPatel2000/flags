@@ -13,9 +13,9 @@ import { flagsRouter } from "./routes/Flags/flags-router";
 import { IFlagsRepository } from "./repository/interfaces/IFlagsRepository";
 import { FlagsRepository } from "./repository/FlagsRepository";
 import { Client } from "./models/Interfaces/Client";
-import { flagsSubsribeRouter } from "./routes/Flags/flags-subscribe-router";
 import { EventEmitter } from "events";
 import { authMiddleware } from "./middlerwares/authorization-middlerware";
+import { flagsSubsribeRouter } from "./routes/Flags/flags-subscribe-router";
 
 config();
 
@@ -53,9 +53,11 @@ const clients = new Array<Client>();
 const eventEmitter = new EventEmitter();
 
 eventEmitter.on("flagsUpdated", (data: { projectId: string }) => {
+    console.log("flagsUpdated event");
     clients.forEach((client) => {
+        console.log(client.clientId);
         if (client.projectId == data.projectId)
-            client.response.write("data: New Updates \n\n", (err) => {
+            client.response.write("data: New Updates\n\n", (err) => {
                 if (err) console.log(`Error ${err}`);
             });
     });

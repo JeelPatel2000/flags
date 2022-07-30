@@ -18,10 +18,12 @@ export const flagsPatchSchema = Joi.object({
     name: Joi.string().optional(),
     description: Joi.string().optional(),
     state: Joi.boolean().optional(),
+    projectId: Joi.string().required(),
 });
 
 export interface FlagsPatchSchema {
     name?: string;
     description?: string;
     state?: boolean;
+    projectId: string;
 }
