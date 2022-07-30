@@ -2,9 +2,13 @@ import { randomUUID } from "crypto";
 import { Response, Router } from "express";
 import { ValidatedRequest } from "express-joi-validation";
 import { Client } from "../../models/Interfaces/Client";
+import { IFlagsRepository } from "../../repository/interfaces/IFlagsRepository";
 import { RequestQuerySchema } from "../Authentication/validator";
 
-export function flagsSubsribeRouter(clients: Client[]) {
+export function flagsSubsribeRouter(
+    clients: Client[],
+    flagsRepository: IFlagsRepository
+) {
     const router = Router();
 
     router.get(
@@ -13,33 +17,45 @@ export function flagsSubsribeRouter(clients: Client[]) {
             req: ValidatedRequest<RequestQuerySchema<{ projectId: string }>>,
             res: Response
         ) => {
-            const { projectId } = req.query;
-            console.log(projectId);
-            res.setHeader("Cache-Control", "no-cache");
-            res.setHeader("Content-Type", "text/event-stream");
-            res.setHeader("Access-Control-Allow-Origin", "*");
-            res.setHeader("Connection", "keep-alive");
-            res.flushHeaders(); // flush the headers to establish SSE with client
+            try {
+                const { projectId } = req.query;
+                console.log(projectId);
+                res.setHeader("Cache-Control", "no-cache");
+                res.setHeader("Content-Type", "text/event-stream");
+                res.setHeader("Access-Control-Allow-Origin", "*");
+                res.setHeader("Connection", "keep-alive");
+                res.flushHeaders(); // flush the headers to establish SSE with client
 
-            const clientId = randomUUID();
+                const clientId = randomUUID();
 
-            const data = {
-                flags: [{ name: "navigation-driver-1", status: true }],
-            };
+                const flags = await flagsRepository.getAllFlagsForAProject(
+                    projectId
+                );
 
-            res.write(`data: ${JSON.stringify(data)}\n\n`);
+                const data = {
+                    flags: flags.map((flag) => ({
+                        flagKey: flag.name,
+                        state: flag.state,
+                    })),
+                };
 
-            const newClient: Client = {
-                clientId: clientId,
-                projectId: projectId,
-                response: res,
-            };
+                res.write(`data: ${JSON.stringify(data)}\n\n`);
 
-            clients.push(newClient);
+                const newClient: Client = {
+                    clientId: clientId,
+                    projectId: projectId,
+                    response: res,
+                };
 
-            req.on("close", () => {
-                // clients = clients.filter(client => client.id !== clientId);
-            });
+                clients.push(newClient);
+
+                req.on("close", () => {
+                    // clients = clients.filter(client => client.id !== clientId);
+                });
+            } catch (err) {
+                console.log(err);
+                res.status(400).send("Error");
+            }
         }
     );
 

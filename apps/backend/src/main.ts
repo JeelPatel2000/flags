@@ -54,12 +54,25 @@ const eventEmitter = new EventEmitter();
 
 eventEmitter.on("flagsUpdated", (data: { projectId: string }) => {
     console.log("flagsUpdated event");
-    clients.forEach((client) => {
-        console.log(client.clientId);
-        if (client.projectId == data.projectId)
-            client.response.write("data: New Updates\n\n", (err) => {
-                if (err) console.log(`Error ${err}`);
-            });
+    clients.forEach(async (client) => {
+        if (client.projectId == data.projectId) {
+            const flags = await flagsRepository.getAllFlagsForAProject(
+                data.projectId
+            );
+
+            const dataToSend = {
+                flags: flags.map((flag) => ({
+                    flagKey: flag.name,
+                    state: flag.state,
+                })),
+            };
+            client.response.write(
+                `data: ${JSON.stringify(dataToSend)}\n\n`,
+                (err) => {
+                    if (err) console.log(`Error ${err}`);
+                }
+            );
+        }
     });
 });
 
@@ -74,13 +87,12 @@ app.use((req, _, next) => {
     next();
 });
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 
 // Routes
 app.use("/auth", authRouter(userRepository));
 app.use("/projects", authMiddleware, projectRouter(projectRepository));
 app.use("/flags", authMiddleware, flagsRouter(flagsRepository, eventEmitter));
-app.use("/sse", flagsSubsribeRouter(clients));
+app.use("/sse", flagsSubsribeRouter(clients, flagsRepository));
 
 const PORT = process.env.PORT || 4300;
 app.listen(PORT, () => console.log(`Server stared on port ${PORT}`));
