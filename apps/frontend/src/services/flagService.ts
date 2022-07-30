@@ -23,7 +23,7 @@ export const updateFlag = async (flag: any, projectId: string) => {
     const result = await http.patch(`${apiEndpoint}/${flag.id}`, {
         name: flag.name,
         description: flag.description,
-        state: !!flag.state,
+        state: flag.state === 0 ? true : false,
         projectId,
     });
     return result;

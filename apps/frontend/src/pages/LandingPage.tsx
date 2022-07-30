@@ -251,19 +251,32 @@ export default function LandingPage() {
             <footer className="mt-24 bg-gray-900 sm:mt-12">
                 <div className="mx-auto max-w-md py-12 px-4 overflow-hidden sm:max-w-3xl sm:px-6 lg:max-w-7xl lg:px-8">
                     <div className="mt-8 flex justify-center space-x-6">
-                        {footerNavigation.social.map((item) => (
-                            <a
-                                key={item.name}
-                                href={item.href}
-                                className="text-gray-400 hover:text-gray-300"
-                            >
-                                <span className="sr-only">{item.name}</span>
-                                <item.icon
-                                    className="h-6 w-6"
-                                    aria-hidden="true"
+                        <a
+                            href="https://townhall.hashnode.com/planetscale-hackathon"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            <div className="text-white flex items-center">
+                                <img
+                                    src="../assets/planetscale.jpg"
+                                    alt="plantscale"
+                                    className="w-28 h-5 rounded"
                                 />
-                            </a>
-                        ))}
+                                <span className="text-lg mx-4 font-semibold">
+                                    x
+                                </span>
+                                <img
+                                    src="../assets/hashnode.png"
+                                    alt="plantscale"
+                                    className="w-28 h-5 rounded"
+                                />
+                            </div>
+                        </a>
+                    </div>
+                    <div>
+                        <p className="text-white mt-3 w-full text-center">
+                            Built with Tailwindcss,React,Typescript and Node
+                        </p>
                     </div>
                 </div>
             </footer>

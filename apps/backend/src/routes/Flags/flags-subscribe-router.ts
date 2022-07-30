@@ -19,7 +19,6 @@ export function flagsSubsribeRouter(
         ) => {
             try {
                 const { projectId } = req.query;
-                console.log(projectId);
                 res.setHeader("Cache-Control", "no-cache");
                 res.setHeader("Content-Type", "text/event-stream");
                 res.setHeader("Access-Control-Allow-Origin", "*");
@@ -50,7 +49,13 @@ export function flagsSubsribeRouter(
                 clients.push(newClient);
 
                 req.on("close", () => {
-                    // clients = clients.filter(client => client.id !== clientId);
+                    const tempClients = [...clients];
+                    clients.splice(0, clients.length);
+                    clients.push(
+                        ...tempClients.filter(
+                            (client) => client.clientId !== clientId
+                        )
+                    );
                 });
             } catch (err) {
                 console.log(err);

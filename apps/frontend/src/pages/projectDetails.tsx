@@ -171,6 +171,7 @@ const ProjectDetails = () => {
                                             <Box>
                                                 <Switch
                                                     value={flag.state}
+                                                    isChecked={flag.state}
                                                     size="lg"
                                                     colorScheme="green"
                                                     onChange={() =>
