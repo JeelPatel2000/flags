@@ -92,7 +92,7 @@ app.use(
 app.use("/flags", authMiddleware, flagsRouter(flagsRepository, eventEmitter));
 app.use("/sse", flagsSubsribeRouter(clients, flagsRepository));
 
-app.get("/", (req, res) => {
+app.get("*", (req, res) => {
     res.sendFile(
         path.resolve(__dirname, "../../../dist/apps/frontend/index.html")
     );
