@@ -1,5 +1,4 @@
 import * as express from "express";
-import { config } from "dotenv";
 import { authRouter } from "./routes/Authentication/auth-router";
 import { knex } from "knex";
 import { getConfig } from "./config";
@@ -16,29 +15,20 @@ import { Client } from "./models/Interfaces/Client";
 import { EventEmitter } from "events";
 import { authMiddleware } from "./middlerwares/authorization-middlerware";
 import { flagsSubsribeRouter } from "./routes/Flags/flags-subscribe-router";
-
-config();
+import path = require("path");
 
 const appConfig = getConfig("prod");
 
 const knexdb = knex({
     client: "mysql2",
-    connection: {
-        host: appConfig.host,
-        port: 3306,
-        user: appConfig.username,
-        password: appConfig.password,
-        database: appConfig.database,
-        ssl: {
-            rejectUnauthorized: false,
-        },
-    },
+    connection: appConfig.connectionString,
     migrations: {
         tableName: "migrations",
     },
 });
 
-const testConnection = knexdb.raw("SELECT 1+1");
+//test
+knexdb.raw("SELECT 1+1");
 
 const userRepository: IUserRepository = new UserRepository(knexdb, "users");
 const projectRepository: IProjectRepository = new ProjectRepository(
@@ -76,6 +66,10 @@ eventEmitter.on("flagsUpdated", (data: { projectId: string }) => {
     });
 });
 
+app.use(
+    express.static(path.resolve(__dirname, "../../../dist/apps/frontend/"))
+);
+
 // Middlerwares
 app.use(
     cors({
@@ -97,6 +91,12 @@ app.use(
 );
 app.use("/flags", authMiddleware, flagsRouter(flagsRepository, eventEmitter));
 app.use("/sse", flagsSubsribeRouter(clients, flagsRepository));
+
+app.get("/", (req, res) => {
+    res.sendFile(
+        path.resolve(__dirname, "../../../dist/apps/frontend/index.html")
+    );
+});
 
 const PORT = process.env.PORT || 4300;
 app.listen(PORT, () => console.log(`Server stared on port ${PORT}`));

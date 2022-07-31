@@ -5,6 +5,7 @@ export type DbConfig = {
     username: string;
     password: string;
     database: string;
+    connectionString?: string;
 };
 
 export type AuthConfig = {
@@ -23,6 +24,7 @@ export const getConfig = (environment: Environment): GlobalConfig => {
             host: process.env.HOST || "",
             password: process.env.PASSWORD || "",
             username: process.env.USERNAME || "",
+            connectionString: process.env.DB_CONNECTION_STRING,
         };
         authConfig = {
             jwtPrivateKey: "yrbfsdafgreyrwereyryhiuschvshk",
