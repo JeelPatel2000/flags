@@ -83,13 +83,13 @@ app.use((req, _, next) => {
 app.use(express.json());
 
 // Routes
-app.use("/auth", authRouter(userRepository));
+app.use("/api/auth", authRouter(userRepository));
 app.use(
-    "/projects",
+    "/api/projects",
     authMiddleware,
     projectRouter(projectRepository, flagsRepository)
 );
-app.use("/flags", authMiddleware, flagsRouter(flagsRepository, eventEmitter));
+app.use("/api/flags", authMiddleware, flagsRouter(flagsRepository, eventEmitter));
 app.use("/sse", flagsSubsribeRouter(clients, flagsRepository));
 
 app.get("*", (req, res) => {

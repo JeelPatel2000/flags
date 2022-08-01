@@ -19,7 +19,13 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { FiFlag, FiSettings, FiMoreVertical } from "react-icons/fi";
+import {
+    FiFlag,
+    FiSettings,
+    FiMoreVertical,
+    FiAlertTriangle,
+    FiInfo,
+} from "react-icons/fi";
 import { useParams } from "react-router-dom";
 import { Button } from "../components";
 import Banner from "../components/Banner";
@@ -32,6 +38,8 @@ import {
     updateFlag,
 } from "../services/flagService";
 import { deleteProject, getProjectById } from "../services/projectService";
+
+const PROJECT_ID = "a1dec559-3221-45e9-9e31-c73a491a9dda";
 
 const ProjectDetails = () => {
     const [project, setProject] = useState<any>({});
@@ -114,25 +122,29 @@ const ProjectDetails = () => {
                         </p>
                     </div>
                     <div className="ml-4 mt-2 flex-shrink-0">
-                        <div className="flex items-center ">
-                            <Menu>
-                                <MenuButton>
-                                    <Button type="icon" margin="mr-3">
-                                        <FiSettings className=" w-6 h-6" />
-                                    </Button>
-                                </MenuButton>
-                                <MenuList p="0" rounded="sm">
-                                    <p className="px-2 py-3 rounded cursor-pointer hover:bg-red-600 hover:text-white">
-                                        <DeleteModal
-                                            type="Project"
-                                            name={project.name}
-                                            handleDelete={handleProjectDelete}
-                                        />
-                                    </p>
-                                </MenuList>
-                            </Menu>
-                            <AddFlagModal projectId={projectId} />
-                        </div>
+                        {project.id !== PROJECT_ID && (
+                            <div className="flex items-center ">
+                                <Menu>
+                                    <MenuButton>
+                                        <Button type="icon" margin="mr-3">
+                                            <FiSettings className=" w-6 h-6" />
+                                        </Button>
+                                    </MenuButton>
+                                    <MenuList p="0" rounded="sm">
+                                        <p className="px-2 py-3 rounded cursor-pointer hover:bg-red-600 hover:text-white">
+                                            <DeleteModal
+                                                type="Project"
+                                                name={project.name}
+                                                handleDelete={
+                                                    handleProjectDelete
+                                                }
+                                            />
+                                        </p>
+                                    </MenuList>
+                                </Menu>
+                                <AddFlagModal projectId={projectId} />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -140,9 +152,35 @@ const ProjectDetails = () => {
                 <p className="text-2xl font-semibold w-full text-center">
                     Your Feature Flags
                 </p>
+
+                {project.id === PROJECT_ID && (
+                    <>
+                        <div className="mx-auto max-w-xl p-4 text-orange-700 bg-orange-50 border border-orange-600 rounded mt-10 text-center flex items-center justify-center">
+                            <span className="mr-4 ">
+                                <FiAlertTriangle className="w-6 h-6" />{" "}
+                            </span>
+                            <span className="text-left font-medium">
+                                Action on this project is restrcited for testing
+                                purposes. This is to ensure no one accidentally
+                                deletes this project or its flags which might
+                                affect the demo website which is using it.
+                            </span>
+                        </div>
+
+                        <div className="mx-auto max-w-xl p-4 text-blue-700 bg-blue-50 border border-blue-600 rounded mt-10 text-center flex items-center justify-center">
+                            <span className="mr-4 ">
+                                <FiInfo className="w-6 h-6" />{" "}
+                            </span>
+                            <span className="text-left font-medium">
+                                Please use a different project to test out the
+                                above restricted functionality.
+                            </span>
+                        </div>
+                    </>
+                )}
                 {flags?.length > 0 ? (
                     <div>
-                        <div className="max-w-xl rounded flex flex-col items-center justify-center mx-auto mt-12 p-6">
+                        <div className="max-w-xl rounded flex flex-col items-center justify-center mx-auto mt-6 p-6">
                             {flags?.map((flag: any) => {
                                 return (
                                     <div
@@ -179,31 +217,35 @@ const ProjectDetails = () => {
                                                     }
                                                 />
                                             </Box>
-                                            <Box>
-                                                <Menu>
-                                                    <MenuButton>
-                                                        <Button type="icon">
-                                                            <FiMoreVertical className=" w-6 h-6" />
-                                                        </Button>
-                                                    </MenuButton>
-                                                    <MenuList
-                                                        p="0"
-                                                        rounded="sm"
-                                                    >
-                                                        <p className="px-2 py-3 rounded cursor-pointer hover:bg-red-600 hover:text-white">
-                                                            <DeleteModal
-                                                                type="Flag"
-                                                                name={flag.name}
-                                                                handleDelete={() =>
-                                                                    handleDeleteFlag(
-                                                                        flag.id
-                                                                    )
-                                                                }
-                                                            />
-                                                        </p>
-                                                    </MenuList>
-                                                </Menu>
-                                            </Box>
+                                            {project.id !== PROJECT_ID && (
+                                                <Box>
+                                                    <Menu>
+                                                        <MenuButton>
+                                                            <Button type="icon">
+                                                                <FiMoreVertical className=" w-6 h-6" />
+                                                            </Button>
+                                                        </MenuButton>
+                                                        <MenuList
+                                                            p="0"
+                                                            rounded="sm"
+                                                        >
+                                                            <p className="px-2 py-3 rounded cursor-pointer hover:bg-red-600 hover:text-white">
+                                                                <DeleteModal
+                                                                    type="Flag"
+                                                                    name={
+                                                                        flag.name
+                                                                    }
+                                                                    handleDelete={() =>
+                                                                        handleDeleteFlag(
+                                                                            flag.id
+                                                                        )
+                                                                    }
+                                                                />
+                                                            </p>
+                                                        </MenuList>
+                                                    </Menu>
+                                                </Box>
+                                            )}
                                         </div>
                                         <Modal
                                             isOpen={isOpen}

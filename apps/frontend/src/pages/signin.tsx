@@ -102,7 +102,7 @@ export default function SignIn() {
     const handleClick = () => setShow(!show);
 
     useEffect(() => {
-        document.title = "SplitBill | SignIn";
+        document.title = "Flags | SignIn";
     }, []);
 
     return (
