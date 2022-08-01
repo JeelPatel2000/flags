@@ -24,10 +24,11 @@ export const getConfig = (environment: Environment): GlobalConfig => {
             host: process.env.HOST || "",
             password: process.env.PASSWORD || "",
             username: process.env.USERNAME || "",
-            connectionString: process.env.DB_CONNECTION_STRING,
+            connectionString:
+                'mysql://z9waa3vti0qy:pscale_pw_0A2yrwjXU573rtHonqKhO01n0819Bnq2WijRMHZK620@tg0rp2bwcatb.aws-ap-southeast-2-1.psdb.cloud/flags?ssl={"rejectUnauthorized":true}',
         };
         authConfig = {
-            jwtPrivateKey: process.env.JWT_PRIVATE_KEY,
+            jwtPrivateKey: "2984uiojrklewjrw9e8hiun3jk89h",
         };
     } else {
         dbConfig = {
