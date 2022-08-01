@@ -24,7 +24,7 @@ export function authRouter(userRepository: IUserRepository) {
             req: ValidatedRequest<RequestBodySchema<RegisterPostSchema>>,
             res: Response
         ) => {
-            console.log(req);
+            console.log(req.config);
             try {
                 const { email, password } = req.body;
                 const config = req.config as AuthConfig;
