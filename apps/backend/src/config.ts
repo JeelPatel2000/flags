@@ -27,7 +27,7 @@ export const getConfig = (environment: Environment): GlobalConfig => {
             connectionString: process.env.DB_CONNECTION_STRING,
         };
         authConfig = {
-            jwtPrivateKey: "yrbfsdafgreyrwereyryhiuschvshk",
+            jwtPrivateKey: process.env.JWT_PRIVATE_KEY,
         };
     } else {
         dbConfig = {
