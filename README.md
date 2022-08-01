@@ -1,94 +1,97 @@
+Flags is an open-source feature flag management software. You may ask what are feature flags.
+
+Well here is a google definition of it.
+
+> Feature flags (also commonly known as feature toggles) is a software engineering technique that turns select functionality on and off during runtime, without deploying new code
+>
+
+Now you may think why does one need to use feature flags? 
 
 
-# Flags
+# Why use feature flagging?
 
-This project was generated using [Nx](https://nx.dev).
+Feature flagging is a great tool that mostly all-grown companies use. I think Hashnode uses it for the new features they roll out to us. 
 
-<p style="text-align: center;"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="450"></p>
+Feature flags greatly benefit the teams/companies who want to perform controlled experimentation on a particular feature. Companies could turn off the flag and **baam** feature is hidden from the users without deploying the new code.
 
-🔎 **Smart, Fast and Extensible Build System**
+There are great companies like Launch Darkly, PostHog, etc which provide you with feature flagging functionalities. The main problem is this software is that they are proprietary. 
+So we thought why not create an open source alternative for it?
 
-## Adding capabilities to your workspace
+Let’s now dive in on how we build it.
 
-Nx supports many plugins which add capabilities for developing different types of applications and different tools.
-
-These capabilities include generating applications, libraries, etc as well as the devtools to test, and build projects as well.
-
-Below are our core plugins:
-
-- [React](https://reactjs.org)
-  - `npm install --save-dev @nrwl/react`
-- Web (no framework frontends)
-  - `npm install --save-dev @nrwl/web`
-- [Angular](https://angular.io)
-  - `npm install --save-dev @nrwl/angular`
-- [Nest](https://nestjs.com)
-  - `npm install --save-dev @nrwl/nest`
-- [Express](https://expressjs.com)
-  - `npm install --save-dev @nrwl/express`
-- [Node](https://nodejs.org)
-  - `npm install --save-dev @nrwl/node`
-
-There are also many [community plugins](https://nx.dev/community) you could add.
-
-## Generate an application
-
-Run `nx g @nrwl/react:app my-app` to generate an application.
-
-> You can use any of the plugins above to generate applications as well.
-
-When using Nx, you can create multiple applications and libraries in the same workspace.
-
-## Generate a library
-
-Run `nx g @nrwl/react:lib my-lib` to generate a library.
-
-> You can also use any of the plugins above to generate libraries as well.
-
-Libraries are shareable across libraries and applications. They can be imported from `@flags/mylib`.
-
-## Development server
-
-Run `nx serve my-app` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `nx g @nrwl/react:component my-component --project=my-app` to generate a new component.
-
-## Build
-
-Run `nx build my-app` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `nx test my-app` to execute the unit tests via [Jest](https://jestjs.io).
-
-Run `nx affected:test` to execute the unit tests affected by a change.
-
-## Running end-to-end tests
-
-Run `nx e2e my-app` to execute the end-to-end tests via [Cypress](https://www.cypress.io).
-
-Run `nx affected:e2e` to execute the end-to-end tests affected by a change.
-
-## Understand your workspace
-
-Run `nx graph` to see a diagram of the dependencies of your projects.
-
-## Further help
-
-Visit the [Nx Documentation](https://nx.dev) to learn more.
+# Project Architecture
 
 
+![architecture.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1659279548943/w6CMIiN7B.png align="left")
 
-## ☁ Nx Cloud
 
-### Distributed Computation Caching & Distributed Task Execution
+![flags.jpeg](https://cdn.hashnode.com/res/hashnode/image/upload/v1659305180226/l9yC7EmG4.jpeg align="left")
 
-<p style="text-align: center;"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-cloud-card.png"></p>
+This is a simple architecture of our system. It follows a few simple steps
 
-Nx Cloud pairs with Nx in order to enable you to build and test code more rapidly, by up to 10 times. Even teams that are new to Nx can connect to Nx Cloud and start saving time instantly.
+1. You create your account and projects.
+2. In each project you will create flags. You could theoretically create as many flags as you want.
+3. You can turn on/off your flags through our dashboard.
+4. Our front-end dashboard will notify the back-end.
+5. On your website you will need to call our API and pass your ```projectId``` which you want to use.
+6. This API call will open up the Event Source connection.
+7. So whenever the flags in the project are updated, our back-end will notify your front-end.
+8. You will need to wrap your feature in a condition based on the flag's state. Check the example below
+9. The change would be immediate you or your users don’t have to do anything.
 
-Teams using Nx gain the advantage of building full-stack applications with their preferred framework alongside Nx’s advanced code generation and project dependency graph, plus a unified experience for both frontend and backend developers.
 
-Visit [Nx Cloud](https://nx.app/) to learn more.
+##  💻 Tech Stack used
+
+- Nx monorepo (React and Express)
+- Typescript
+- TailwindCSS and Chakra UI
+- AWS EC2 instance to host backend
+- Nginx for proxy server
+- Planet scale as the database
+- Knex for the ORM
+- Event Source web API
+
+# 🎥 Walkthrough
+
+Here is a quick walkthrough of the project and the use case.
+
+%[https://youtu.be/BXvpIzcyZ90]
+
+
+# 🗂 Docs
+
+Check out our [docs page](https://flags.jeel.dev/docs) for further details, best practices, and how to add the flags to your project.
+
+
+# 🔗 Useful Links
+
+
+- [Main Website Github](https://github.com/JeelPatel2000/flags)
+- [Main Website](https://flags.jeel.dev/)
+
+- [Demo Website using feature flags](https://flags-demo.vercel.app/)
+
+### How to test the project
+- Open the main website. Log in with the below credentials
+- Open the **Hashnode** project
+- NOTE: The project's actions such as deleting the project, and adding/ deleting the feature flags is restricted.
+- To test those functionalities please create a different project.
+- In the Hashnode project you will see three feature flags that are being used in a demo website we have created for you.
+- All the three flags represent three different features on that website.
+- Open the demo project. Place both tabs side by side for easier testing
+- Try toggling the feature flags on/off and see the result in real-time on the demo website.
+- See the above walk-through video for an example.
+- If you want to test this on your own website please see our docs and ask any questions if you are stuck.
+
+###  Login Credentials
+
+- Username: demo4@flags.com
+- Password: demo123
+
+
+# 👊 Team
+- @[Jeel Patel](@jeelpatel3)
+- @[Rushil Patel](@rushilp2311)
+
+Attribution
+PlanetScale x Hackathon
