@@ -89,7 +89,11 @@ app.use(
     authMiddleware,
     projectRouter(projectRepository, flagsRepository)
 );
-app.use("/api/flags", authMiddleware, flagsRouter(flagsRepository, eventEmitter));
+app.use(
+    "/api/flags",
+    authMiddleware,
+    flagsRouter(flagsRepository, eventEmitter)
+);
 app.use("/sse", flagsSubsribeRouter(clients, flagsRepository));
 
 app.get("*", (req, res) => {

@@ -24,6 +24,7 @@ export function authRouter(userRepository: IUserRepository) {
             req: ValidatedRequest<RequestBodySchema<RegisterPostSchema>>,
             res: Response
         ) => {
+            console.log(req);
             try {
                 const { email, password } = req.body;
                 const config = req.config as AuthConfig;
@@ -86,7 +87,7 @@ export function authRouter(userRepository: IUserRepository) {
 
                 const token = jwt.sign(
                     { userId: userId, email: email, name: name },
-                    config.jwtPrivateKey
+                    "skldjh98q3ehjkdknsadkjdsdhew"
                 );
 
                 res.send({ token });
