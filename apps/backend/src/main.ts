@@ -18,9 +18,7 @@ import { flagsSubsribeRouter } from "./routes/Flags/flags-subscribe-router";
 import path = require("path");
 import { config } from "dotenv";
 
-config({ path: path.resolve(__dirname, "../") });
-
-console.log(path.resolve(__dirname, "../"));
+config();
 
 const appConfig = getConfig("prod");
 
