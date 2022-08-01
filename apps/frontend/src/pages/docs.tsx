@@ -77,7 +77,7 @@ const Docs = () => {
                                     className="rounded px-2"
                                     colorScheme="blue"
                                 >
-                                    http://ec2-99-79-37-226.ca-central-1.compute.amazonaws.com:4300/sse/subscribeToFlagUpdates?projectId="YOUR_PROJECT_ID"
+                                    https://flags.jeel.dev/sse/subscribeToFlagUpdates?projectId="YOUR_PROJECT_ID"
                                 </Code>
                             </p>
                         </div>
