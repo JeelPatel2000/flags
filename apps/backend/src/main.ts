@@ -16,6 +16,11 @@ import { EventEmitter } from "events";
 import { authMiddleware } from "./middlerwares/authorization-middlerware";
 import { flagsSubsribeRouter } from "./routes/Flags/flags-subscribe-router";
 import path = require("path");
+import { config } from "dotenv";
+
+config({ path: path.resolve(__dirname, "../") });
+
+console.log(path.resolve(__dirname, "../"));
 
 const appConfig = getConfig("prod");
 
