@@ -21,11 +21,10 @@ Let’s now dive in on how we build it.
 
 # Project Architecture
 
+<img width="985" alt="w6CMIiN7B" src="https://user-images.githubusercontent.com/34994081/196028006-05fe77ee-9c4b-4080-8f72-7adad6c279fd.png">
 
-![architecture.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1659279548943/w6CMIiN7B.png align="left")
 
-
-![flags.jpeg](https://cdn.hashnode.com/res/hashnode/image/upload/v1659305180226/l9yC7EmG4.jpeg align="left")
+![l9yC7EmG4](https://user-images.githubusercontent.com/34994081/196028030-5fe98d53-4977-48ec-b523-3da28ddb001f.jpeg)
 
 This is a simple architecture of our system. It follows a few simple steps
 
